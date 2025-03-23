@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德國橋牌規則說明</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 20px;
+        }
+        .rule-section {
+            margin-bottom: 20px;
+        }
+        .example {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover {
+            background-color: #2980b9;
+        }
+        .important {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>德國橋牌規則說明</h1>
+
+        <div class="rule-section">
+            <h2>遊戲人數</h2>
+            <p>本遊戲支援2-8人進行，不同人數會有不同的每人最大牌數限制：</p>
+            <ul>
+                <li>2人遊戲：每人最多26張牌</li>
+                <li>3人遊戲：每人最多17張牌</li>
+                <li>4人遊戲：每人最多13張牌</li>
+                <li>5人遊戲：每人最多10張牌</li>
+                <li>6人遊戲：每人最多8張牌</li>
+                <li>7人遊戲：每人最多7張牌</li>
+                <li>8人遊戲：每人最多6張牌</li>
+            </ul>
+        </div>
+
+        <div class="rule-section">
+            <h2>遊戲流程</h2>
+            <ol>
+                <li>每回合開始時，系統會隨機指定一個花色作為王牌</li>
+                <li>每位玩家會拿到相同數量的牌</li>
+                <li>玩家需要在看到手牌後叫出自己預計可以贏得的墩數</li>
+                <li>所有玩家叫牌完成後進行遊戲</li>
+                <li>回合結束時記錄實際贏得的墩數並計分</li>
+            </ol>
+            <p class="important">特別注意：最後一位叫牌的玩家不能叫出會讓總叫牌數等於總墩數的數字！</p>
+        </div>
+
+        <div class="rule-section">
+            <h2>牌數變化規則</h2>
+            <p>遊戲進行方式是牌數先遞增後遞減，然後循環：</p>
+            <ul>
+                <li>從1張牌開始，每回合增加1張</li>
+                <li>到達最大牌數後開始每回合減少1張</li>
+                <li>減到1張後又開始增加</li>
+            </ul>
+            <div class="example">
+                例如4人遊戲的牌數變化：<br>
+                1→2→3→...→13→12→11→...→1→2→...（循環）
+            </div>
+        </div>
+
+        <div class="rule-section">
+            <h2>計分方法</h2>
+            <p>每回合結束後，根據叫牌數和實際贏得的墩數計算分數：</p>
+            <ul>
+                <li>如果實際贏得的墩數等於叫牌數（Just Make）：
+                    <div class="example">
+                        得分 = 10 + (贏墩數 × 贏墩數)<br>
+                        例如：叫3贏3，得分為10 + (3 × 3) = 19分
+                    </div>
+                </li>
+                <li>如果實際贏得的墩數不等於叫牌數（Up或Down）：
+                    <div class="example">
+                        扣分 = -(贏墩數 - 叫墩數)²<br>
+                        例如：叫3贏5，扣分為-((5 - 3)² = -4分
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <a href="javascript:window.close()" class="back-link">返回遊戲</a>
+    </div>
+</body>
+</html> 
