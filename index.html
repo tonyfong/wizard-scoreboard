@@ -128,6 +128,18 @@
             border-color: #e74c3c;
         }
         
+        .confirm-btn {
+            background: #27ae60 !important;
+            color: white !important;
+            border-color: #27ae60 !important;
+            min-width: 80px !important;
+        }
+        
+        .confirm-btn:hover:not(:disabled) {
+            background: #229954 !important;
+            border-color: #229954 !important;
+        }
+        
         /* 出牌結果樣式 */
         .trick-results {
             padding: 20px;
@@ -373,7 +385,7 @@
         <button class="keypad-btn" data-value="8">8</button>
         <button class="keypad-btn" data-value="9">9</button>
         <button class="keypad-btn" data-value="10">10</button>
-        <button id="confirm-bid" class="keypad-btn" style="background: #27ae60; color: white; border-color: #27ae60;">確定</button>
+        <button id="confirm-bid" class="keypad-btn confirm-btn">確定</button>
     </div>
 
     <script src="js/storage.js"></script>

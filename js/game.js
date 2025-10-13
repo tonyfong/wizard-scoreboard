@@ -34,8 +34,16 @@ class Game {
     initializeEventListeners() {
         console.log('設置事件監聽器...');
         
+        // 檢查必要的DOM元素是否存在
+        const startButton = document.getElementById('start-game');
+        if (!startButton) {
+            console.error('找不到開始遊戲按鈕！');
+            return;
+        }
+        console.log('找到開始遊戲按鈕');
+        
         // 開始遊戲按鈕
-        document.getElementById('start-game').addEventListener('click', () => this.startGame());
+        startButton.addEventListener('click', () => this.startGame());
         
         // 數字鍵盤按鈕
         document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
@@ -240,6 +248,7 @@ class Game {
     // 選擇叫牌數
     selectBid(value) {
         this.selectedBid = value;
+        console.log(`選擇叫牌數: ${value}`);
         this.updateBiddingDisplay();
     }
 
@@ -250,13 +259,16 @@ class Game {
             return;
         }
         
+        console.log(`玩家${this.currentBiddingPlayer + 1}叫牌: ${this.selectedBid}`);
         this.bids[this.currentBiddingPlayer] = this.selectedBid;
         this.currentBiddingPlayer++;
         this.selectedBid = 0;
         
         if (this.currentBiddingPlayer < this.players.length) {
+            console.log(`輪到玩家${this.currentBiddingPlayer + 1}叫牌`);
             this.updateBiddingDisplay();
         } else {
+            console.log('所有玩家都叫完牌了');
             this.showBiddingSummary();
         }
         
@@ -424,5 +436,18 @@ class Game {
     }
 }
 
-// 初始化遊戲
-const game = new Game();
+// 確保DOM完全載入後再初始化遊戲
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM載入完成，初始化遊戲...');
+    const game = new Game();
+    window.game = game; // 將遊戲實例設為全局變量，方便調試
+});
+
+// 如果DOM已經載入，立即初始化
+if (document.readyState === 'loading') {
+    console.log('等待DOM載入...');
+} else {
+    console.log('DOM已載入，立即初始化遊戲...');
+    const game = new Game();
+    window.game = game;
+}
