@@ -16,7 +16,7 @@ class Game {
         // 遊戲階段管理
         this.gamePhase = 'setup'; // setup, bidding, playing, results, scores
         this.currentBiddingPlayer = 0; // 當前叫牌的玩家索引
-        this.selectedBid = 0; // 當前選擇的叫牌數
+        this.selectedBid = null; // 當前選擇的叫牌數
         
         // 先初始化事件監聽器
         this.initializeEventListeners();
@@ -98,7 +98,7 @@ class Game {
         this.isIncreasing = true;
         this.gamePhase = 'bidding';
         this.currentBiddingPlayer = 0;
-        this.selectedBid = 0;
+        this.selectedBid = null;
         
         // 清除叫牌摘要顯示
         this.clearBiddingSummary();
@@ -280,7 +280,7 @@ class Game {
 
     // 確認叫牌
     confirmBid() {
-        if (this.selectedBid === 0) {
+        if (this.selectedBid === null || this.selectedBid === undefined) {
             alert('請選擇叫牌數！');
             return;
         }
@@ -288,7 +288,7 @@ class Game {
         console.log(`玩家${this.currentBiddingPlayer + 1}叫牌: ${this.selectedBid}`);
         this.bids[this.currentBiddingPlayer] = this.selectedBid;
         this.currentBiddingPlayer++;
-        this.selectedBid = 0;
+        this.selectedBid = null; // 重置為null而不是0
         
         if (this.currentBiddingPlayer < this.players.length) {
             console.log(`輪到玩家${this.currentBiddingPlayer + 1}叫牌`);
@@ -433,7 +433,7 @@ class Game {
             this.isIncreasing = true;
             this.gamePhase = 'setup';
             this.currentBiddingPlayer = 0;
-            this.selectedBid = 0;
+            this.selectedBid = null;
             
             // 清除叫牌摘要顯示
             this.clearBiddingSummary();
