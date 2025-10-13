@@ -149,10 +149,21 @@ class TestFramework {
         try {
             this.log('測試4: 測試開始新遊戲...');
             
+            // 檢查遊戲實例是否存在
+            if (!window.game) {
+                this.setResult('test4', false, '❌ 遊戲實例不存在');
+                this.log('❌ 遊戲實例不存在', 'error');
+                return;
+            }
+            
             // 設置4人遊戲
             const playerCountSelect = document.getElementById('player-count');
             if (playerCountSelect) {
                 playerCountSelect.value = '4';
+            } else {
+                this.setResult('test4', false, '❌ 找不到玩家數量選擇器');
+                this.log('❌ 找不到玩家數量選擇器', 'error');
+                return;
             }
             
             // 開始遊戲
@@ -178,6 +189,21 @@ class TestFramework {
     async test5_BiddingProcess() {
         try {
             this.log('測試5: 測試叫牌流程...');
+            
+            // 檢查遊戲實例是否存在
+            if (!window.game) {
+                this.setResult('test5', false, '❌ 遊戲實例不存在');
+                this.log('❌ 遊戲實例不存在', 'error');
+                return;
+            }
+            
+            // 確保遊戲處於叫牌階段
+            if (window.game.gamePhase !== 'bidding') {
+                window.game.gamePhase = 'bidding';
+                window.game.players = ['玩家1', '玩家2', '玩家3', '玩家4'];
+                window.game.bids = new Array(4).fill(null);
+                window.game.currentBiddingPlayer = 0;
+            }
             
             // 模擬叫牌過程
             const testBids = [1, 0, 2, 1];
@@ -436,7 +462,7 @@ class TestFramework {
     // 運行所有測試
     async runAllTests() {
         this.log('🚀 開始運行所有測試...', 'info');
-        this.log('=' * 50, 'info');
+        this.log('==================================================', 'info');
         
         const tests = [
             () => this.test1_GameInstance(),
@@ -474,7 +500,7 @@ class TestFramework {
         const passedTests = Object.values(this.results).filter(r => r.passed).length;
         const failedTests = totalTests - passedTests;
         
-        this.log('=' * 50, 'info');
+        this.log('==================================================', 'info');
         this.log(`📊 測試總結:`, 'info');
         this.log(`✅ 通過: ${passedTests}/${totalTests}`, passedTests === totalTests ? 'success' : 'warning');
         this.log(`❌ 失敗: ${failedTests}/${totalTests}`, failedTests > 0 ? 'error' : 'success');

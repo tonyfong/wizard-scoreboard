@@ -155,6 +155,50 @@
         </div>
     </div>
 
+    <!-- 隱藏的主遊戲HTML結構，用於測試 -->
+    <div id="hidden-game-elements" style="display: none;">
+        <select id="player-count">
+            <option value="2">2人</option>
+            <option value="3">3人</option>
+            <option value="4">4人</option>
+            <option value="5">5人</option>
+            <option value="6">6人</option>
+            <option value="7">7人</option>
+            <option value="8">8人</option>
+        </select>
+        <button id="start-game">開始遊戲</button>
+        <button id="clear-game">清除遊戲</button>
+        <button id="confirm-bid">確定</button>
+        <button id="start-playing">開始出牌</button>
+        <button id="calculate-scores">計算分數</button>
+        <button id="show-history">歷史記錄</button>
+        <button id="next-round">開始下一局</button>
+        <div id="bidding-summary" style="display: none;">
+            <div id="bids-list"></div>
+        </div>
+        <div id="results-list"></div>
+        <div id="players-score"></div>
+        <div id="current-round"></div>
+        <div id="cards-per-player"></div>
+        <div id="trump-suit"></div>
+        <div id="max-tricks"></div>
+        <div id="current-player-name"></div>
+        <div id="total-bids"></div>
+        <div id="number-keypad" class="number-keypad">
+            <button class="keypad-btn" data-value="0">0</button>
+            <button class="keypad-btn" data-value="1">1</button>
+            <button class="keypad-btn" data-value="2">2</button>
+            <button class="keypad-btn" data-value="3">3</button>
+            <button class="keypad-btn" data-value="4">4</button>
+            <button class="keypad-btn" data-value="5">5</button>
+            <button class="keypad-btn" data-value="6">6</button>
+            <button class="keypad-btn" data-value="7">7</button>
+            <button class="keypad-btn" data-value="8">8</button>
+            <button class="keypad-btn" data-value="9">9</button>
+            <button class="keypad-btn" data-value="10">10</button>
+        </div>
+    </div>
+
     <script src="../js/storage.js"></script>
     <script src="../js/game.js"></script>
     <script src="test-framework.js"></script>
