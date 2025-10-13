@@ -6,8 +6,252 @@
     <title>德國橋牌記分</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* ... 現有的樣式 ... */
+        /* 遊戲狀態管理 */
+        .game-state {
+            display: none;
+        }
         
+        .game-state.active {
+            display: block;
+        }
+        
+        /* 遊戲設置樣式 */
+        .game-setup {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .setup-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .player-count-select {
+            padding: 10px 15px;
+            font-size: 18px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .start-game-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .start-game-btn:hover {
+            background-color: #229954;
+        }
+        
+        /* 叫牌階段樣式 */
+        .bidding-phase {
+            padding: 20px;
+        }
+        
+        .round-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .current-player {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .bidding-summary {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* 數字鍵盤樣式 */
+        .number-keypad {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #ddd;
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            z-index: 1000;
+        }
+        
+        .keypad-btn {
+            min-width: 50px;
+            height: 50px;
+            border: 2px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .keypad-btn:hover:not(:disabled) {
+            background: #3498db;
+            color: white;
+        }
+        
+        .keypad-btn:disabled {
+            background: #f5f5f5;
+            color: #ccc;
+            border-color: #ddd;
+            cursor: not-allowed;
+        }
+        
+        .keypad-btn.selected {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        
+        /* 出牌結果樣式 */
+        .trick-results {
+            padding: 20px;
+        }
+        
+        .player-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .adjust-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .adjust-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .adjust-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        /* 分數顯示樣式 */
+        .score-display {
+            padding: 20px;
+        }
+        
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .player-score {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .score-value {
+            font-size: 24px;
+            color: #3498db;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .history-btn {
+            background: #9b59b6;
+            color: white;
+        }
+        
+        .history-btn:hover {
+            background: #8e44ad;
+        }
+        
+        .next-round-btn {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .next-round-btn:hover {
+            background: #229954;
+        }
+        
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .number-keypad {
+                padding: 10px;
+            }
+            
+            .keypad-btn {
+                min-width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+            
+            .score-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* 規則按鈕 */
         .rules-button {
             position: fixed;
             top: 20px;
@@ -41,56 +285,95 @@
         </header>
 
         <main>
-            <!-- 遊戲設置區域 -->
-            <section id="game-setup" class="section">
-                <h2>遊戲設置</h2>
-                <div class="setup-controls">
-                    <label for="player-count">選擇玩家數量（2-8人）：</label>
-                    <select id="player-count">
-                        <option value="2">2人</option>
-                        <option value="3">3人</option>
-                        <option value="4" selected>4人</option>
-                        <option value="5">5人</option>
-                        <option value="6">6人</option>
-                        <option value="7">7人</option>
-                        <option value="8">8人</option>
-                    </select>
-                    <button id="start-game">開始遊戲</button>
+            <!-- 遊戲設置階段 -->
+            <div id="game-setup" class="game-state active">
+                <div class="game-setup">
+                    <h2>遊戲設置</h2>
+                    <div class="setup-controls">
+                        <label for="player-count">選擇玩家數量（2-8人）：</label>
+                        <select id="player-count" class="player-count-select">
+                            <option value="2">2人</option>
+                            <option value="3">3人</option>
+                            <option value="4" selected>4人</option>
+                            <option value="5">5人</option>
+                            <option value="6">6人</option>
+                            <option value="7">7人</option>
+                            <option value="8">8人</option>
+                        </select>
+                        <button id="start-game" class="start-game-btn">開始遊戲</button>
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- 玩家分數顯示區域 -->
-            <section id="score-display" class="section">
-                <h2>當前分數</h2>
-                <div id="players-score" class="score-grid">
-                    <!-- 玩家分數將通過JavaScript動態添加 -->
+            <!-- 叫牌階段 -->
+            <div id="bidding-phase" class="game-state">
+                <div class="bidding-phase">
+                    <div class="round-info">
+                        <h2>第<span id="current-round">1</span>回合</h2>
+                        <p>每人 <span id="cards-per-player">1</span> 張牌</p>
+                        <p>王牌花色：<span id="trump-suit">♠</span></p>
+                    </div>
+                    
+                    <div class="current-player">
+                        <h3><span id="current-player-name">玩家1</span> 請叫牌</h3>
+                        <p>已叫總數：<span id="total-bids">0</span> / <span id="max-tricks">1</span></p>
+                    </div>
+                    
+                    <div class="bidding-summary" id="bidding-summary" style="display: none;">
+                        <h4>叫牌結果</h4>
+                        <div id="bids-list"></div>
+                        <button id="start-playing" class="start-game-btn" style="display: none;">開始出牌</button>
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- 叫牌區域 -->
-            <section id="bidding" class="section">
-                <h2>叫牌</h2>
-                <div id="round-inputs" class="bidding-form">
-                    <!-- 叫牌表單將通過JavaScript動態添加 -->
+            <!-- 出牌結果階段 -->
+            <div id="trick-results" class="game-state">
+                <div class="trick-results">
+                    <h2>出牌結果</h2>
+                    <p>請調整實際贏得的墩數</p>
+                    <div id="results-list"></div>
+                    <button id="calculate-scores" class="start-game-btn">計算分數</button>
                 </div>
-            </section>
+            </div>
 
-            <!-- 出牌結果區域 -->
-            <section id="tricks" class="section">
-                <h2>出牌結果</h2>
-                <div id="trick-inputs" class="trick-form">
-                    <!-- 出牌結果表單將通過JavaScript動態添加 -->
+            <!-- 分數顯示階段 -->
+            <div id="score-display" class="game-state">
+                <div class="score-display">
+                    <h2>當前分數</h2>
+                    <div id="players-score" class="score-grid"></div>
+                    <div class="action-buttons">
+                        <button id="show-history" class="action-btn history-btn">歷史記錄</button>
+                        <button id="next-round" class="action-btn next-round-btn">開始下一局</button>
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            <!-- 歷史記錄區域 -->
-            <section id="history" class="section">
-                <h2>歷史記錄</h2>
-                <div id="history-list">
-                    <!-- 歷史記錄將通過JavaScript動態添加 -->
+            <!-- 歷史記錄彈窗 -->
+            <div id="history-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; max-width: 90%; max-height: 80%; overflow-y: auto;">
+                    <h3>歷史記錄</h3>
+                    <div id="history-list"></div>
+                    <button onclick="document.getElementById('history-modal').style.display='none'" class="action-btn" style="margin-top: 15px;">關閉</button>
                 </div>
-            </section>
+            </div>
         </main>
+    </div>
+
+    <!-- 數字鍵盤 -->
+    <div id="number-keypad" class="number-keypad" style="display: none;">
+        <button class="keypad-btn" data-value="0">0</button>
+        <button class="keypad-btn" data-value="1">1</button>
+        <button class="keypad-btn" data-value="2">2</button>
+        <button class="keypad-btn" data-value="3">3</button>
+        <button class="keypad-btn" data-value="4">4</button>
+        <button class="keypad-btn" data-value="5">5</button>
+        <button class="keypad-btn" data-value="6">6</button>
+        <button class="keypad-btn" data-value="7">7</button>
+        <button class="keypad-btn" data-value="8">8</button>
+        <button class="keypad-btn" data-value="9">9</button>
+        <button class="keypad-btn" data-value="10">10</button>
+        <button id="confirm-bid" class="keypad-btn" style="background: #27ae60; color: white; border-color: #27ae60;">確定</button>
     </div>
 
     <script src="js/storage.js"></script>

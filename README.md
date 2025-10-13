@@ -44,21 +44,21 @@
 
 ## 在線體驗
 
-[點擊這裡體驗遊戲](https://你的GitHub用戶名.github.io/wizard-scoreboard/)
+[點擊這裡體驗遊戲](https://tonyfong.github.io/wizard-scoreboard/)
 
 ## 本地運行
 
 1. 克隆此倉庫：
 ```bash
-git clone https://github.com/你的GitHub用戶名/wizard-scoreboard.git
+git clone https://github.com/tonyfong/wizard-scoreboard.git
 ```
 
 2. 使用瀏覽器打開`index.html`即可開始使用
 
 ## 開發者
 
-- 作者：[Tony Fong]
-- GitHub：[https://github.com/tonyfong/]
+- 作者：Tony Fong
+- GitHub：[https://github.com/tonyfong](https://github.com/tonyfong)
 
 ## 授權
 

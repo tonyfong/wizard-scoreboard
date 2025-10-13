@@ -13,6 +13,11 @@ class Game {
         this.maxCardsTotal = 52; // 一副牌共52張
         this.isIncreasing = true; // 是否在增加牌數
         
+        // 遊戲階段管理
+        this.gamePhase = 'setup'; // setup, bidding, playing, results, scores
+        this.currentBiddingPlayer = 0; // 當前叫牌的玩家索引
+        this.selectedBid = 0; // 當前選擇的叫牌數
+        
         // 先初始化事件監聽器
         this.initializeEventListeners();
         
@@ -28,71 +33,48 @@ class Game {
     // 初始化事件監聽器
     initializeEventListeners() {
         console.log('設置事件監聽器...');
-        const startButton = document.getElementById('start-game');
-        if (!startButton) {
-            console.error('找不到開始遊戲按鈕！');
-            return;
-        }
         
-        startButton.addEventListener('click', () => {
-            console.log('點擊開始遊戲按鈕');
-            this.startGame();
+        // 開始遊戲按鈕
+        document.getElementById('start-game').addEventListener('click', () => this.startGame());
+        
+        // 數字鍵盤按鈕
+        document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
+            btn.addEventListener('click', (e) => this.selectBid(parseInt(e.target.dataset.value)));
         });
         
-        // 使用事件委託來處理動態生成的按鈕
-        document.addEventListener('click', (event) => {
-            if (event.target.id === 'submit-bids') {
-                console.log('點擊提交叫牌按鈕');
-                this.submitBids();
-            } else if (event.target.id === 'submit-tricks') {
-                console.log('點擊提交結果按鈕');
-                this.submitTricks();
-            }
-        });
+        // 確定叫牌按鈕
+        document.getElementById('confirm-bid').addEventListener('click', () => this.confirmBid());
+        
+        // 開始出牌按鈕
+        document.getElementById('start-playing').addEventListener('click', () => this.startPlaying());
+        
+        // 計算分數按鈕
+        document.getElementById('calculate-scores').addEventListener('click', () => this.calculateScores());
+        
+        // 歷史記錄按鈕
+        document.getElementById('show-history').addEventListener('click', () => this.showHistory());
+        
+        // 下一局按鈕
+        document.getElementById('next-round').addEventListener('click', () => this.nextRound());
+        
         console.log('事件監聽器設置完成');
-    }
-
-    // 計算每位玩家最多可以拿到幾張牌
-    calculateMaxCardsPerPlayer(playerCount) {
-        // 根據玩家數量計算每人最多可以拿到的牌數
-        switch(playerCount) {
-            case 2:
-                return 26; // 52/2 = 26
-            case 3:
-                return 17; // 51/3 = 17
-            case 4:
-                return 13; // 52/4 = 13
-            case 5:
-                return 10; // 50/5 = 10
-            case 6:
-                return 8;  // 48/6 = 8
-            case 7:
-                return 7;  // 49/7 = 7
-            case 8:
-                return 6;  // 48/8 = 6
-            default:
-                return 7;  // 預設值
-        }
     }
 
     // 開始新遊戲
     startGame() {
         console.log('開始新遊戲...');
-        const playerCountSelect = document.getElementById('player-count');
-        if (!playerCountSelect) {
-            console.error('找不到玩家數量選擇框！');
-            return;
-        }
-        
-        const playerCount = parseInt(playerCountSelect.value);
+        const playerCount = parseInt(document.getElementById('player-count').value);
         console.log(`選擇的玩家數量: ${playerCount}`);
         
         this.players = Array.from({length: playerCount}, (_, i) => `玩家${i + 1}`);
-        this.scores = new Array(playerCount).fill(0); // 初始分數為0
+        this.scores = new Array(playerCount).fill(0);
         this.history = [];
         this.currentRound = 0;
-        this.currentTricks = 0; // 從0開始，startNewRound會將其增加到1
-        this.isIncreasing = true; // 開始時設置為遞增模式
+        this.currentTricks = 0;
+        this.isIncreasing = true;
+        this.gamePhase = 'bidding';
+        this.currentBiddingPlayer = 0;
+        this.selectedBid = 0;
         
         console.log('開始第一回合');
         this.startNewRound();
@@ -107,18 +89,14 @@ class Game {
         
         // 計算當前回合的牌數
         if (this.currentTricks === maxCards) {
-            // 達到最大值後開始遞減
             this.isIncreasing = false;
             this.currentTricks = maxCards - 1;
         } else if (this.currentTricks === 1 && !this.isIncreasing) {
-            // 達到最小值後開始遞增
             this.isIncreasing = true;
             this.currentTricks = 2;
         } else if (this.isIncreasing) {
-            // 遞增階段
             this.currentTricks = Math.min(this.currentTricks + 1, maxCards);
         } else {
-            // 遞減階段
             this.currentTricks = Math.max(this.currentTricks - 1, 1);
         }
 
@@ -127,7 +105,24 @@ class Game {
         this.bids = new Array(this.players.length).fill(null);
         this.actualTricks = new Array(this.players.length).fill(0);
         this.trumpSuit = this.getRandomSuit();
+        this.gamePhase = 'bidding';
+        this.currentBiddingPlayer = 0;
+        this.selectedBid = 0;
         this.updateDisplay();
+    }
+
+    // 計算每位玩家最多可以拿到幾張牌
+    calculateMaxCardsPerPlayer(playerCount) {
+        switch(playerCount) {
+            case 2: return 26;
+            case 3: return 17;
+            case 4: return 13;
+            case 5: return 10;
+            case 6: return 8;
+            case 7: return 7;
+            case 8: return 6;
+            default: return 7;
+        }
     }
 
     // 獲取隨機花色
@@ -138,176 +133,254 @@ class Game {
 
     // 更新顯示
     updateDisplay() {
-        console.log('更新顯示...');
+        this.showGamePhase();
+        this.updateScoreDisplay();
+        this.updateHistoryDisplay();
+    }
+
+    // 顯示當前遊戲階段
+    showGamePhase() {
+        // 隱藏所有階段
+        document.querySelectorAll('.game-state').forEach(state => {
+            state.classList.remove('active');
+        });
         
-        // 更新分數顯示
-        const scoreDisplay = document.getElementById('players-score');
-        if (!scoreDisplay) {
-            console.error('找不到分數顯示區域！');
-            return;
+        // 顯示當前階段
+        const currentPhase = document.getElementById(this.gamePhase === 'setup' ? 'game-setup' : 
+                                                   this.gamePhase === 'bidding' ? 'bidding-phase' :
+                                                   this.gamePhase === 'playing' ? 'bidding-phase' :
+                                                   this.gamePhase === 'results' ? 'trick-results' : 'score-display');
+        if (currentPhase) {
+            currentPhase.classList.add('active');
         }
-        scoreDisplay.innerHTML = this.players.map((player, index) => `
-            <div class="player-score">
-                <div class="player-name">${player}</div>
-                <div class="score-value">${this.scores[index]}</div>
-            </div>
-        `).join('');
-
-        // 更新叫牌表單
-        const roundInputs = document.getElementById('round-inputs');
-        if (!roundInputs) {
-            console.error('找不到叫牌輸入區域！');
-            return;
-        }
-        this.updateBiddingForm();
-
-        // 更新出牌表單
-        const trickInputs = document.getElementById('trick-inputs');
-        if (!trickInputs) {
-            console.error('找不到出牌輸入區域！');
-            return;
-        }
-        this.updateTrickForm();
-
-        // 更新歷史記錄
-        const historyList = document.getElementById('history-list');
-        if (!historyList) {
-            console.error('找不到歷史記錄區域！');
-            return;
-        }
-        this.updateHistory();
         
-        console.log('顯示更新完成');
+        // 根據階段更新內容
+        if (this.gamePhase === 'bidding') {
+            this.updateBiddingDisplay();
+        } else if (this.gamePhase === 'results') {
+            this.updateResultsDisplay();
+        } else if (this.gamePhase === 'scores') {
+            this.updateScoresDisplay();
+        }
     }
 
-    // 更新叫牌表單
-    updateBiddingForm() {
-        const roundInputs = document.getElementById('round-inputs');
-        const maxCards = this.calculateMaxCardsPerPlayer(this.players.length);
-        roundInputs.innerHTML = `
-            <div class="round-info">
-                <p>第${this.currentRound}回合 - 每人${this.currentTricks}張牌</p>
-                <p>王牌花色：${this.trumpSuit}</p>
-                <p class="round-hint">提示：總墩數為${this.currentTricks}，所有玩家叫牌總和不能等於總墩數</p>
-                <p class="cards-info">（注意：由於一副牌只有52張，${this.players.length}位玩家每人最多只能拿${maxCards}張牌）</p>
-            </div>
-            ${this.players.map((player, index) => `
-                <div class="round-input">
-                    <label for="bid-${index}">${player}的叫牌數（0-${this.currentTricks}）：</label>
-                    <input type="number" id="bid-${index}" min="0" max="${this.currentTricks}" value="0">
-                </div>
-            `).join('')}
-            <button id="submit-bids">提交叫牌</button>
-        `;
+    // 更新叫牌顯示
+    updateBiddingDisplay() {
+        document.getElementById('current-round').textContent = this.currentRound;
+        document.getElementById('cards-per-player').textContent = this.currentTricks;
+        document.getElementById('trump-suit').textContent = this.trumpSuit;
+        document.getElementById('max-tricks').textContent = this.currentTricks;
+        
+        // 更新當前叫牌玩家
+        if (this.currentBiddingPlayer < this.players.length) {
+            document.getElementById('current-player-name').textContent = this.players[this.currentBiddingPlayer];
+            
+            // 計算已叫總數
+            const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
+            document.getElementById('total-bids').textContent = totalBids;
+            
+            // 顯示數字鍵盤
+            this.showKeypad();
+        } else {
+            // 所有玩家都叫完牌了
+            this.showBiddingSummary();
+        }
     }
 
-    // 更新出牌表單
-    updateTrickForm() {
-        const trickInputs = document.getElementById('trick-inputs');
-        if (this.bids.some(bid => bid === null)) {
-            trickInputs.innerHTML = '<p>請先完成叫牌</p>';
-            return;
-        }
-
-        trickInputs.innerHTML = `
-            ${this.players.map((player, index) => `
-                <div class="round-input">
-                    <label for="trick-${index}">${player}實際贏得的墩數（0-${this.currentTricks}）：</label>
-                    <input type="number" id="trick-${index}" min="0" max="${this.currentTricks}" value="0">
-                </div>
-            `).join('')}
-            <button id="submit-tricks">提交結果</button>
-        `;
+    // 顯示叫牌摘要
+    showBiddingSummary() {
+        document.getElementById('bidding-summary').style.display = 'block';
+        document.getElementById('start-playing').style.display = 'block';
+        
+        const bidsList = document.getElementById('bids-list');
+        bidsList.innerHTML = this.players.map((player, index) => 
+            `<div>${player}: ${this.bids[index]} 墩</div>`
+        ).join('');
+        
+        this.hideKeypad();
     }
 
-    // 更新歷史記錄
-    updateHistory() {
-        const historyList = document.getElementById('history-list');
-        historyList.innerHTML = this.history.map((record, index) => `
-            <div class="history-item">
-                <strong>第${index + 1}回合：</strong>
-                ${record}
-            </div>
-        `).join('');
+    // 顯示數字鍵盤
+    showKeypad() {
+        const keypad = document.getElementById('number-keypad');
+        keypad.style.display = 'flex';
+        
+        // 更新按鈕狀態
+        document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
+            const value = parseInt(btn.dataset.value);
+            const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
+            const isLastPlayer = this.currentBiddingPlayer === this.players.length - 1;
+            
+            // 禁用超過最大牌數的選項
+            if (value > this.currentTricks) {
+                btn.disabled = true;
+            }
+            // 最後一個玩家不能讓總數等於最大牌數
+            else if (isLastPlayer && totalBids + value === this.currentTricks) {
+                btn.disabled = true;
+            }
+            else {
+                btn.disabled = false;
+            }
+            
+            // 高亮選中的數字
+            if (value === this.selectedBid) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.remove('selected');
+            }
+        });
     }
 
-    // 提交叫牌
-    submitBids() {
-        const bids = this.players.map((_, index) => 
-            parseInt(document.getElementById(`bid-${index}`).value) || 0
-        );
-
-        // 驗證輸入
-        if (bids.some(bid => bid < 0 || bid > this.currentTricks)) {
-            alert(`叫牌數必須在0到${this.currentTricks}之間！`);
-            return;
-        }
-
-        // 驗證最後一個玩家的叫牌
-        const totalBids = bids.reduce((sum, bid) => sum + bid, 0);
-        if (totalBids === this.currentTricks) {
-            alert('最後一個玩家不能叫這個數，因為所有玩家都可能贏到所需的墩數！');
-            return;
-        }
-
-        this.bids = bids;
-        this.updateDisplay();
-        this.saveGameState(); // 保存遊戲狀態
+    // 隱藏數字鍵盤
+    hideKeypad() {
+        document.getElementById('number-keypad').style.display = 'none';
     }
 
-    // 提交實際贏得的墩數
-    submitTricks() {
-        const tricks = this.players.map((_, index) => 
-            parseInt(document.getElementById(`trick-${index}`).value) || 0
-        );
+    // 選擇叫牌數
+    selectBid(value) {
+        this.selectedBid = value;
+        this.updateBiddingDisplay();
+    }
 
-        // 驗證輸入
-        if (tricks.some(trick => trick < 0 || trick > this.currentTricks)) {
-            alert(`贏得的墩數必須在0到${this.currentTricks}之間！`);
+    // 確認叫牌
+    confirmBid() {
+        if (this.selectedBid === 0) {
+            alert('請選擇叫牌數！');
             return;
         }
-
-        // 驗證總墩數
-        const totalTricks = tricks.reduce((sum, trick) => sum + trick, 0);
-        if (totalTricks !== this.currentTricks) {
-            alert(`所有玩家贏得的墩數之和必須等於${this.currentTricks}！`);
-            return;
+        
+        this.bids[this.currentBiddingPlayer] = this.selectedBid;
+        this.currentBiddingPlayer++;
+        this.selectedBid = 0;
+        
+        if (this.currentBiddingPlayer < this.players.length) {
+            this.updateBiddingDisplay();
+        } else {
+            this.showBiddingSummary();
         }
-
-        // 計算分數
-        this.calculateScores(tricks);
-
-        // 記錄歷史
-        const record = this.players.map((player, index) => 
-            `${player}: 叫${this.bids[index]}贏${tricks[index]}`
-        ).join(' | ');
-        this.history.push(record);
-
-        // 更新顯示
-        this.updateDisplay();
-
-        // 保存遊戲狀態
+        
         this.saveGameState();
+    }
 
-        // 開始新回合
-        this.startNewRound();
+    // 開始出牌
+    startPlaying() {
+        this.gamePhase = 'playing';
+        this.hideKeypad();
+        // 這裡可以添加出牌階段的邏輯
+        // 暫時直接跳到結果階段
+        setTimeout(() => {
+            this.gamePhase = 'results';
+            this.updateDisplay();
+        }, 1000);
+    }
+
+    // 更新結果顯示
+    updateResultsDisplay() {
+        const resultsList = document.getElementById('results-list');
+        resultsList.innerHTML = this.players.map((player, index) => `
+            <div class="player-result">
+                <div>
+                    <strong>${player}</strong><br>
+                    叫牌: ${this.bids[index]} 墩
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; margin-bottom: 5px;">${this.actualTricks[index] || this.bids[index]}</div>
+                    <div class="adjust-buttons">
+                        <button class="adjust-btn" onclick="game.adjustTricks(${index}, -1)">-</button>
+                        <button class="adjust-btn" onclick="game.adjustTricks(${index}, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 調整墩數
+    adjustTricks(playerIndex, change) {
+        const newValue = (this.actualTricks[playerIndex] || this.bids[playerIndex]) + change;
+        if (newValue >= 0 && newValue <= this.currentTricks) {
+            this.actualTricks[playerIndex] = newValue;
+            this.updateResultsDisplay();
+        }
     }
 
     // 計算分數
-    calculateScores(actualTricks) {
+    calculateScores() {
+        // 確保所有玩家都有實際墩數
+        for (let i = 0; i < this.players.length; i++) {
+            if (this.actualTricks[i] === null || this.actualTricks[i] === undefined) {
+                this.actualTricks[i] = this.bids[i];
+            }
+        }
+        
+        this.calculateScoresInternal(this.actualTricks);
+        
+        // 記錄歷史
+        const record = this.players.map((player, index) => 
+            `${player}: 叫${this.bids[index]}贏${this.actualTricks[index]}`
+        ).join(' | ');
+        this.history.push(record);
+        
+        this.gamePhase = 'scores';
+        this.updateDisplay();
+        this.saveGameState();
+    }
+
+    // 內部計分方法
+    calculateScoresInternal(actualTricks) {
         this.players.forEach((_, index) => {
             const bid = this.bids[index];
             const tricks = actualTricks[index];
             const difference = tricks - bid;
             
             if (difference === 0) {
-                // Just Make: 10 + 贏墩數 * 贏墩數
                 this.scores[index] += 10 + (tricks * tricks);
             } else {
-                // Up or Down: -(贏墩數 - 叫墩數) * (贏墩數 - 叫墩數)
                 this.scores[index] -= (difference * difference);
             }
         });
+    }
+
+    // 更新分數顯示
+    updateScoresDisplay() {
+        const scoreDisplay = document.getElementById('players-score');
+        scoreDisplay.innerHTML = this.players.map((player, index) => `
+            <div class="player-score">
+                <div class="player-name">${player}</div>
+                <div class="score-value">${this.scores[index]}</div>
+            </div>
+        `).join('');
+    }
+
+    // 更新分數顯示（通用）
+    updateScoreDisplay() {
+        if (this.players.length > 0) {
+            this.updateScoresDisplay();
+        }
+    }
+
+    // 顯示歷史記錄
+    showHistory() {
+        const modal = document.getElementById('history-modal');
+        const historyList = document.getElementById('history-list');
+        
+        historyList.innerHTML = this.history.map((record, index) => `
+            <div style="padding: 10px; border-bottom: 1px solid #eee;">
+                <strong>第${index + 1}回合：</strong> ${record}
+            </div>
+        `).join('');
+        
+        modal.style.display = 'block';
+    }
+
+    // 下一局
+    nextRound() {
+        this.startNewRound();
+    }
+
+    // 更新歷史記錄顯示
+    updateHistoryDisplay() {
+        // 這個方法在手機版中主要用於彈窗顯示
     }
 
     // 保存遊戲狀態
@@ -321,7 +394,10 @@ class Game {
             trumpSuit: this.trumpSuit,
             bids: this.bids,
             actualTricks: this.actualTricks,
-            isIncreasing: this.isIncreasing
+            isIncreasing: this.isIncreasing,
+            gamePhase: this.gamePhase,
+            currentBiddingPlayer: this.currentBiddingPlayer,
+            selectedBid: this.selectedBid
         };
         storage.saveGame(gameState);
     }
@@ -330,16 +406,18 @@ class Game {
     loadGameState() {
         const gameState = storage.loadGame();
         if (gameState) {
-            this.players = gameState.players;
-            this.scores = gameState.scores;
-            this.history = gameState.history;
-            this.currentRound = gameState.currentRound;
-            this.currentTricks = gameState.currentTricks;
+            this.players = gameState.players || [];
+            this.scores = gameState.scores || [];
+            this.history = gameState.history || [];
+            this.currentRound = gameState.currentRound || 0;
+            this.currentTricks = gameState.currentTricks || 0;
             this.trumpSuit = gameState.trumpSuit;
-            this.bids = gameState.bids;
-            this.actualTricks = gameState.actualTricks;
+            this.bids = gameState.bids || [];
+            this.actualTricks = gameState.actualTricks || [];
             this.isIncreasing = gameState.isIncreasing ?? true;
-            this.updateDisplay();
+            this.gamePhase = gameState.gamePhase || 'setup';
+            this.currentBiddingPlayer = gameState.currentBiddingPlayer || 0;
+            this.selectedBid = gameState.selectedBid || 0;
             return true;
         }
         return false;
@@ -347,4 +425,4 @@ class Game {
 }
 
 // 初始化遊戲
-const game = new Game(); 
+const game = new Game();
