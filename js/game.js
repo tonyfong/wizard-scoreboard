@@ -100,6 +100,9 @@ class Game {
         this.currentBiddingPlayer = 0;
         this.selectedBid = 0;
         
+        // 清除叫牌摘要顯示
+        this.clearBiddingSummary();
+        
         console.log('開始第一回合');
         this.startNewRound();
         this.updateDisplay();
@@ -222,6 +225,13 @@ class Game {
         ).join('');
         
         this.hideKeypad();
+    }
+
+    // 清除叫牌摘要
+    clearBiddingSummary() {
+        document.getElementById('bidding-summary').style.display = 'none';
+        document.getElementById('start-playing').style.display = 'none';
+        document.getElementById('bids-list').innerHTML = '';
     }
 
     // 顯示數字鍵盤
@@ -424,6 +434,9 @@ class Game {
             this.gamePhase = 'setup';
             this.currentBiddingPlayer = 0;
             this.selectedBid = 0;
+            
+            // 清除叫牌摘要顯示
+            this.clearBiddingSummary();
             
             // 清除本地存儲
             storage.clearGame();
