@@ -134,7 +134,11 @@ class Game {
         this.trumpSuit = this.getRandomSuit();
         this.gamePhase = 'bidding';
         this.currentBiddingPlayer = 0;
-        this.selectedBid = 0;
+        this.selectedBid = null;
+        
+        // 清除上一回合的叫牌摘要顯示
+        this.clearBiddingSummary();
+        
         this.updateDisplay();
     }
 
