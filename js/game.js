@@ -320,29 +320,50 @@ class Game {
     // 更新結果顯示
     updateResultsDisplay() {
         const resultsList = document.getElementById('results-list');
-        resultsList.innerHTML = this.players.map((player, index) => `
-            <div class="player-result">
-                <div>
-                    <strong>${player}</strong><br>
-                    叫牌: ${this.bids[index]} 墩
-                </div>
-                <div style="text-align: center;">
-                    <div style="font-size: 18px; margin-bottom: 5px;">${this.actualTricks[index] || this.bids[index]}</div>
-                    <div class="adjust-buttons">
-                        <button class="adjust-btn" onclick="game.adjustTricks(${index}, -1)">-</button>
-                        <button class="adjust-btn" onclick="game.adjustTricks(${index}, 1)">+</button>
+        resultsList.innerHTML = this.players.map((player, index) => {
+            // 確保actualTricks有正確的初始值
+            if (this.actualTricks[index] === null || this.actualTricks[index] === undefined) {
+                this.actualTricks[index] = this.bids[index];
+            }
+            
+            const currentValue = this.actualTricks[index];
+            const canDecrease = currentValue > 0;
+            const canIncrease = currentValue < this.currentTricks;
+            
+            return `
+                <div class="player-result">
+                    <div>
+                        <strong>${player}</strong><br>
+                        叫牌: ${this.bids[index]} 墩
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 18px; margin-bottom: 5px;">${currentValue}</div>
+                        <div class="adjust-buttons">
+                            <button class="adjust-btn" onclick="game.adjustTricks(${index}, -1)" 
+                                    ${!canDecrease ? 'disabled style="opacity: 0.5;"' : ''}>-</button>
+                            <button class="adjust-btn" onclick="game.adjustTricks(${index}, 1)" 
+                                    ${!canIncrease ? 'disabled style="opacity: 0.5;"' : ''}>+</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     // 調整墩數
     adjustTricks(playerIndex, change) {
-        const newValue = (this.actualTricks[playerIndex] || this.bids[playerIndex]) + change;
+        const currentValue = this.actualTricks[playerIndex] !== null && this.actualTricks[playerIndex] !== undefined 
+            ? this.actualTricks[playerIndex] 
+            : this.bids[playerIndex];
+        const newValue = currentValue + change;
+        
+        console.log(`玩家${playerIndex + 1}調整墩數: ${currentValue} + ${change} = ${newValue}`);
+        
         if (newValue >= 0 && newValue <= this.currentTricks) {
             this.actualTricks[playerIndex] = newValue;
             this.updateResultsDisplay();
+        } else {
+            console.log(`調整失敗: 新值${newValue}超出範圍[0, ${this.currentTricks}]`);
         }
     }
 
@@ -353,6 +374,15 @@ class Game {
             if (this.actualTricks[i] === null || this.actualTricks[i] === undefined) {
                 this.actualTricks[i] = this.bids[i];
             }
+        }
+        
+        // 驗證總墩數是否等於發牌數量
+        const totalTricks = this.actualTricks.reduce((sum, tricks) => sum + tricks, 0);
+        console.log(`總墩數: ${totalTricks}, 發牌數量: ${this.currentTricks}`);
+        
+        if (totalTricks !== this.currentTricks) {
+            alert(`錯誤！所有玩家的出牌結果總數必須等於發牌數量。\n\n當前總數: ${totalTricks}\n發牌數量: ${this.currentTricks}\n\n請調整後重新計算。`);
+            return;
         }
         
         this.calculateScoresInternal(this.actualTricks);
