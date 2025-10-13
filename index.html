@@ -51,6 +51,21 @@
             background-color: #229954;
         }
         
+        .clear-game-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .clear-game-btn:hover {
+            background-color: #c0392b;
+        }
+        
         /* 叫牌階段樣式 */
         .bidding-phase {
             padding: 20px;
@@ -313,6 +328,7 @@
                             <option value="8">8人</option>
                         </select>
                         <button id="start-game" class="start-game-btn">開始遊戲</button>
+                        <button id="clear-game" class="clear-game-btn">清除遊戲</button>
                     </div>
                 </div>
             </div>
@@ -357,6 +373,7 @@
                     <div class="action-buttons">
                         <button id="show-history" class="action-btn history-btn">歷史記錄</button>
                         <button id="next-round" class="action-btn next-round-btn">開始下一局</button>
+                        <button id="clear-game-from-scores" class="action-btn clear-game-btn">清除遊戲</button>
                     </div>
                 </div>
             </div>

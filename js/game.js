@@ -45,6 +45,15 @@ class Game {
         // 開始遊戲按鈕
         startButton.addEventListener('click', () => this.startGame());
         
+        // 清除遊戲按鈕
+        const clearButton = document.getElementById('clear-game');
+        if (clearButton) {
+            clearButton.addEventListener('click', () => this.clearGame());
+            console.log('找到清除遊戲按鈕');
+        } else {
+            console.error('找不到清除遊戲按鈕！');
+        }
+        
         // 數字鍵盤按鈕
         document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
             btn.addEventListener('click', (e) => this.selectBid(parseInt(e.target.dataset.value)));
@@ -64,6 +73,13 @@ class Game {
         
         // 下一局按鈕
         document.getElementById('next-round').addEventListener('click', () => this.nextRound());
+        
+        // 分數頁面的清除遊戲按鈕
+        const clearGameFromScores = document.getElementById('clear-game-from-scores');
+        if (clearGameFromScores) {
+            clearGameFromScores.addEventListener('click', () => this.clearGame());
+            console.log('找到分數頁面清除遊戲按鈕');
+        }
         
         console.log('事件監聽器設置完成');
     }
@@ -388,6 +404,36 @@ class Game {
     // 下一局
     nextRound() {
         this.startNewRound();
+    }
+
+    // 清除遊戲
+    clearGame() {
+        if (confirm('確定要清除所有遊戲數據嗎？這將重置所有分數和歷史記錄。')) {
+            console.log('清除遊戲數據...');
+            
+            // 重置所有遊戲狀態
+            this.players = [];
+            this.scores = [];
+            this.history = [];
+            this.currentRound = 0;
+            this.currentTricks = 0;
+            this.trumpSuit = null;
+            this.bids = [];
+            this.actualTricks = [];
+            this.isIncreasing = true;
+            this.gamePhase = 'setup';
+            this.currentBiddingPlayer = 0;
+            this.selectedBid = 0;
+            
+            // 清除本地存儲
+            storage.clearGame();
+            
+            // 重置界面
+            this.updateDisplay();
+            
+            console.log('遊戲數據已清除');
+            alert('遊戲數據已清除，可以重新開始！');
+        }
     }
 
     // 更新歷史記錄顯示
