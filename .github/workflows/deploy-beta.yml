@@ -10,24 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
+    - name: Checkout mobile-optimization branch
       uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        ref: mobile-optimization
         
     - name: Create beta directory structure
       run: |
         mkdir -p beta
-        cp -r . beta/
-        # Remove unnecessary files from beta directory
-        rm -rf beta/.git
-        rm -rf beta/.github
+        # Copy only necessary files for the beta site
+        cp index.html beta/
+        cp -r css beta/
+        cp -r js beta/
+        cp rules.html beta/
+        cp README.md beta/
+        cp beta-info.html beta/
+        # Remove development files
         rm -rf beta/test
         rm -rf beta/*.bat
         rm -rf beta/*.ps1
+        rm -rf beta/.git
+        rm -rf beta/.github
         
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3

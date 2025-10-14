@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>德國橋牌計分程式 - Beta版本</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .beta-container {
+            text-align: center;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .beta-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .description {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .features {
+            text-align: left;
+            margin: 30px 0;
+        }
+        .features h3 {
+            color: #ffd93d;
+            margin-bottom: 15px;
+        }
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+        .features li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .features li:before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+        .buttons {
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: #4ecdc4;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn:hover {
+            background: #45b7b8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .btn-primary {
+            background: #ff6b6b;
+        }
+        .btn-primary:hover {
+            background: #ff5252;
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="beta-container">
+        <div class="beta-badge">🚧 BETA VERSION</div>
+        
+        <h1>德國橋牌計分程式</h1>
+        <p class="description">
+            這是手機版優化的測試版本，包含最新的界面改進和功能優化。
+        </p>
+        
+        <div class="features">
+            <h3>🎯 Beta版本新功能：</h3>
+            <ul>
+                <li>手機版優化界面</li>
+                <li>改進的遊戲流程</li>
+                <li>更好的觸控體驗</li>
+                <li>響應式設計</li>
+                <li>數字鍵盤優化</li>
+                <li>階段式遊戲流程</li>
+            </ul>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ 注意：</strong>這是測試版本，可能存在未發現的問題。請謹慎使用並提供反饋。
+        </div>
+        
+        <div class="buttons">
+            <a href="index.html" class="btn btn-primary">🎮 開始測試Beta版本</a>
+            <a href="../" class="btn">📱 返回正式版本</a>
+        </div>
+        
+        <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+            最後更新：<span id="last-updated"></span>
+        </p>
+    </div>
+    
+    <script>
+        // 顯示最後更新時間
+        document.getElementById('last-updated').textContent = new Date().toLocaleString('zh-TW');
+    </script>
+</body>
+</html>
