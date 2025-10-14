@@ -1,0 +1,38 @@
+name: Deploy Beta Version
+
+on:
+  push:
+    branches: [ mobile-optimization ]
+  workflow_dispatch:
+
+jobs:
+  deploy-beta:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Create beta directory structure
+      run: |
+        mkdir -p beta
+        cp -r . beta/
+        # Remove unnecessary files from beta directory
+        rm -rf beta/.git
+        rm -rf beta/.github
+        rm -rf beta/test
+        rm -rf beta/*.bat
+        rm -rf beta/*.ps1
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./beta
+        destination_dir: beta
+        keep_files: true
