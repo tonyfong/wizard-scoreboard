@@ -1,0 +1,45 @@
+name: Deploy Beta Version (Fixed)
+
+on:
+  push:
+    branches: [ mobile-optimization ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: mobile-optimization
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+        
+    - name: Setup Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+    - name: Create beta directory
+      run: |
+        mkdir -p beta
+        cp index.html beta/
+        cp -r css beta/
+        cp -r js beta/
+        cp rules.html beta/
+        cp README.md beta/
+        cp beta-info.html beta/
+        rm -rf beta/test
+        rm -rf beta/*.bat
+        rm -rf beta/*.ps1
+        
+    - name: Deploy to gh-pages
+      run: |
+        git checkout --orphan gh-pages
+        git rm -rf .
+        cp -r beta/* .
+        git add .
+        git commit -m "Deploy beta version"
+        git push origin gh-pages
