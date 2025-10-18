@@ -249,15 +249,16 @@ class Game {
             const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
             const isLastPlayer = this.currentBiddingPlayer === this.players.length - 1;
             
-            // 禁用超過最大牌數的選項
+            // 隱藏超過最大牌數的按鈕
             if (value > this.currentTricks) {
-                btn.disabled = true;
+                btn.style.display = 'none';
             }
             // 最後一個玩家不能讓總數等於最大牌數
             else if (isLastPlayer && totalBids + value === this.currentTricks) {
-                btn.disabled = true;
+                btn.style.display = 'none';
             }
             else {
+                btn.style.display = 'block';
                 btn.disabled = false;
             }
             
@@ -272,7 +273,15 @@ class Game {
 
     // 隱藏數字鍵盤
     hideKeypad() {
-        document.getElementById('number-keypad').style.display = 'none';
+        const keypad = document.getElementById('number-keypad');
+        keypad.style.display = 'none';
+        
+        // 重置所有按鈕的顯示狀態
+        document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
+            btn.style.display = 'block';
+            btn.disabled = false;
+            btn.classList.remove('selected');
+        });
     }
 
     // 選擇叫牌數
