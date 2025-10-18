@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, mobile-optimization ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -26,16 +26,12 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
-      - name: Build for main branch
-        if: github.ref == 'refs/heads/main'
+      - name: Build and prepare deployment
         run: |
-          # For main branch, deploy everything as is
+          # Deploy main content to root
           echo "Deploying main branch to root"
           
-      - name: Build for beta branch
-        if: github.ref == 'refs/heads/mobile-optimization'
-        run: |
-          # For mobile-optimization branch, create beta structure
+          # Create beta directory with same content for testing
           mkdir -p beta
           cp index.html beta/
           cp -r css beta/
@@ -55,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ github.ref == 'refs/heads/main' && '.' || './beta' }}
+          path: .
 
   deploy:
     environment:
