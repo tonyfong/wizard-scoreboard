@@ -249,17 +249,24 @@ class Game {
             const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
             const isLastPlayer = this.currentBiddingPlayer === this.players.length - 1;
             
-            // 隱藏超過最大牌數的按鈕
-            if (value > this.currentTricks) {
-                btn.style.display = 'none';
-            }
-            // 最後一個玩家不能讓總數等於最大牌數
-            else if (isLastPlayer && totalBids + value === this.currentTricks) {
-                btn.style.display = 'none';
-            }
-            else {
+            // 顯示所有從 0 到最大牌數的按鈕
+            if (value <= this.currentTricks) {
                 btn.style.display = 'block';
-                btn.disabled = false;
+                
+                // 禁用超過最大牌數的選項
+                if (value > this.currentTricks) {
+                    btn.disabled = true;
+                }
+                // 最後一個玩家不能讓總數等於最大牌數
+                else if (isLastPlayer && totalBids + value === this.currentTricks) {
+                    btn.disabled = true;
+                }
+                else {
+                    btn.disabled = false;
+                }
+            } else {
+                // 隱藏超過最大牌數的按鈕
+                btn.style.display = 'none';
             }
             
             // 高亮選中的數字
