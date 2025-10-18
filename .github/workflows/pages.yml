@@ -47,6 +47,11 @@ jobs:
           rm -rf beta/*.bat
           rm -rf beta/*.ps1
           
+          # Create a version indicator for beta
+          echo "<!-- Beta Version -->" > beta/version.html
+          echo "<h1>Beta Version - Mobile Optimization</h1>" >> beta/version.html
+          echo "<p>This is the beta version with mobile optimizations.</p>" >> beta/version.html
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
