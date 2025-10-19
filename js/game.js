@@ -198,10 +198,15 @@ class Game {
     // 更新叫牌顯示
     updateBiddingDisplay() {
         // 更新標題信息
-        document.getElementById('current-round').textContent = this.currentRound;
-        document.getElementById('cards-per-player').textContent = this.currentTricks;
-        document.getElementById('trump-suit').textContent = this.trumpSuit;
-        document.getElementById('max-tricks').textContent = this.currentTricks;
+        const currentRoundEl = document.getElementById('current-round');
+        const cardsPerPlayerEl = document.getElementById('cards-per-player');
+        const trumpSuitEl = document.getElementById('trump-suit');
+        const maxTricksEl = document.getElementById('max-tricks');
+        
+        if (currentRoundEl) currentRoundEl.textContent = this.currentRound;
+        if (cardsPerPlayerEl) cardsPerPlayerEl.textContent = this.currentTricks;
+        if (trumpSuitEl) trumpSuitEl.textContent = this.trumpSuit;
+        if (maxTricksEl) maxTricksEl.textContent = this.currentTricks;
         
         // 更新玩家狀態顯示
         this.updatePlayersBiddingStatus();
