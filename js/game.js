@@ -494,17 +494,19 @@ class Game {
     
     // 獲取當前回合的分數
     getCurrentRoundScore(playerIndex) {
-        if (!this.bids[playerIndex] || !this.actualTricks[playerIndex]) {
+        if (this.bids[playerIndex] === null || this.bids[playerIndex] === undefined || 
+            this.actualTricks[playerIndex] === null || this.actualTricks[playerIndex] === undefined) {
             return 0;
         }
         
         const bid = this.bids[playerIndex];
         const actual = this.actualTricks[playerIndex];
+        const difference = actual - bid;
         
-        if (actual === bid) {
-            return 20 + bid * 10;
+        if (difference === 0) {
+            return 10 + (actual * actual);
         } else {
-            return Math.abs(actual - bid) * -10;
+            return -(difference * difference);
         }
     }
 
