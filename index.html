@@ -178,6 +178,62 @@
             color: #3498db;
         }
         
+        /* 分數顯示容器樣式 */
+        .scores-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* 按鈕佈局樣式 */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .clear-game-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .clear-game-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .history-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .history-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .next-round-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .next-round-btn:hover {
+            background-color: #229954;
+        }
+        
         /* 數字鍵盤樣式 */
         .number-keypad {
             position: fixed;
@@ -486,8 +542,10 @@
                         <span class="flow-step current">當前分數</span>
                     </div>
                     
-                    <!-- 玩家分數顯示 -->
-                    <div id="players-score" class="score-grid"></div>
+                    <!-- 玩家分數顯示容器 -->
+                    <div class="scores-container">
+                        <div id="players-score" class="score-grid"></div>
+                    </div>
                     
                     <!-- 底部按鈕 -->
                     <div class="action-buttons">
