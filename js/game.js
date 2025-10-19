@@ -197,18 +197,19 @@ class Game {
 
     // 更新叫牌顯示
     updateBiddingDisplay() {
+        // 更新標題信息
         document.getElementById('current-round').textContent = this.currentRound;
         document.getElementById('cards-per-player').textContent = this.currentTricks;
         document.getElementById('trump-suit').textContent = this.trumpSuit;
         document.getElementById('max-tricks').textContent = this.currentTricks;
         
+        // 更新玩家狀態顯示
+        this.updatePlayersBiddingStatus();
+        
         // 更新當前叫牌玩家
         if (this.currentBiddingPlayer < this.players.length) {
-            document.getElementById('current-player-name').textContent = this.players[this.currentBiddingPlayer];
-            
             // 計算已叫總數
             const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
-            document.getElementById('total-bids').textContent = totalBids;
             
             // 顯示數字鍵盤
             this.showKeypad();
@@ -216,6 +217,34 @@ class Game {
             // 所有玩家都叫完牌了
             this.showBiddingSummary();
         }
+    }
+    
+    // 更新玩家叫牌狀態顯示
+    updatePlayersBiddingStatus() {
+        const container = document.getElementById('players-bidding-status');
+        const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
+        
+        container.innerHTML = this.players.map((player, index) => {
+            const isCurrentPlayer = index === this.currentBiddingPlayer;
+            const hasBid = this.bids[index] !== null && this.bids[index] !== undefined;
+            const bidValue = this.bids[index] || 0;
+            
+            let statusText = '';
+            if (isCurrentPlayer) {
+                statusText = `請叫牌 (已共叫${totalBids}墩)`;
+            } else if (hasBid) {
+                statusText = `已叫牌: ${bidValue}墩`;
+            } else {
+                statusText = '等待叫牌中';
+            }
+            
+            return `
+                <div class="player-bidding-card ${isCurrentPlayer ? 'current' : ''}">
+                    <h3>${player}</h3>
+                    <div class="status">${statusText}</div>
+                </div>
+            `;
+        }).join('');
     }
 
     // 顯示叫牌摘要
@@ -431,13 +460,45 @@ class Game {
 
     // 更新分數顯示
     updateScoresDisplay() {
+        // 更新標題信息
+        document.getElementById('current-round-scores').textContent = this.currentRound;
+        document.getElementById('cards-per-player-scores').textContent = this.currentTricks;
+        document.getElementById('trump-suit-scores').textContent = this.trumpSuit;
+        
         const scoreDisplay = document.getElementById('players-score');
-        scoreDisplay.innerHTML = this.players.map((player, index) => `
-            <div class="player-score">
-                <div class="player-name">${player}</div>
-                <div class="score-value">${this.scores[index]}</div>
-            </div>
-        `).join('');
+        scoreDisplay.innerHTML = this.players.map((player, index) => {
+            const currentScore = this.scores[index];
+            const previousScore = this.currentRound > 1 ? this.scores[index] - this.getCurrentRoundScore(index) : 0;
+            const currentRoundScore = this.getCurrentRoundScore(index);
+            
+            return `
+                <div class="player-score">
+                    <div class="player-name">${player}</div>
+                    <div class="score-calculation">
+                        <div class="score-formula">
+                            上局${previousScore} + 今局${currentRoundScore}
+                        </div>
+                        <div class="score-value">${currentScore}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    // 獲取當前回合的分數
+    getCurrentRoundScore(playerIndex) {
+        if (!this.bids[playerIndex] || !this.actualTricks[playerIndex]) {
+            return 0;
+        }
+        
+        const bid = this.bids[playerIndex];
+        const actual = this.actualTricks[playerIndex];
+        
+        if (actual === bid) {
+            return 20 + bid * 10;
+        } else {
+            return Math.abs(actual - bid) * -10;
+        }
     }
 
     // 更新分數顯示（通用）

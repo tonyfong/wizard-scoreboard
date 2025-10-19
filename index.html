@@ -90,10 +90,92 @@
         
         .bidding-summary {
             background: #fff3e0;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
             margin-bottom: 15px;
             text-align: center;
+        }
+        
+        .bidding-complete-info h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+        
+        /* 遊戲流程樣式 */
+        .game-flow {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .flow-step {
+            padding: 5px 10px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .flow-step.current {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        /* 玩家叫牌狀態樣式 */
+        .players-bidding-status {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .player-bidding-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .player-bidding-card.current {
+            border-color: #3498db;
+            background: #e3f2fd;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .player-bidding-card h3 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+        }
+        
+        .player-bidding-card .status {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .player-bidding-card.current .status {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        /* 分數計算樣式 */
+        .score-calculation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .score-formula {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .score-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
         }
         
         /* 數字鍵盤樣式 */
@@ -338,21 +420,30 @@
             <!-- 叫牌階段 -->
             <div id="bidding-phase" class="game-state">
                 <div class="bidding-phase">
+                    <!-- 標題第一行：局數、牌數、花色 -->
                     <div class="round-info">
-                        <h2>第<span id="current-round">1</span>回合</h2>
-                        <p>每人 <span id="cards-per-player">1</span> 張牌</p>
-                        <p>王牌花色：<span id="trump-suit">♠</span></p>
+                        <h2>第<span id="current-round">1</span>回合 每人<span id="cards-per-player">1</span>張牌 王牌花色：<span id="trump-suit">♠</span></h2>
                     </div>
                     
-                    <div class="current-player">
-                        <h3><span id="current-player-name">玩家1</span> 請叫牌</h3>
-                        <p>已叫總數：<span id="total-bids">0</span> / <span id="max-tricks">1</span></p>
+                    <!-- 標題第二行：遊戲流程 -->
+                    <div class="game-flow">
+                        <span class="flow-step current">叫牌</span> > 
+                        <span class="flow-step">出牌結果</span> > 
+                        <span class="flow-step">當前分數</span>
                     </div>
                     
+                    <!-- 玩家叫牌狀態 -->
+                    <div class="players-bidding-status" id="players-bidding-status">
+                        <!-- 動態生成玩家狀態 -->
+                    </div>
+                    
+                    <!-- 叫牌完成後的摘要 -->
                     <div class="bidding-summary" id="bidding-summary" style="display: none;">
-                        <h4>叫牌結果</h4>
-                        <div id="bids-list"></div>
-                        <button id="start-playing" class="start-game-btn" style="display: none;">開始出牌</button>
+                        <div class="bidding-complete-info">
+                            <h3>叫牌完成</h3>
+                            <p>所有玩家已完成叫牌，準備開始出牌</p>
+                        </div>
+                        <button id="start-playing" class="start-game-btn">開始出牌</button>
                     </div>
                 </div>
             </div>
@@ -360,8 +451,21 @@
             <!-- 出牌結果階段 -->
             <div id="trick-results" class="game-state">
                 <div class="trick-results">
-                    <h2>出牌結果</h2>
-                    <p>請調整實際贏得的墩數</p>
+                    <!-- 標題第一行：局數、牌數、花色 -->
+                    <div class="round-info">
+                        <h2>第<span id="current-round-results">1</span>回合 每人<span id="cards-per-player-results">1</span>張牌 王牌花色：<span id="trump-suit-results">♠</span></h2>
+                    </div>
+                    
+                    <!-- 標題第二行：遊戲流程 -->
+                    <div class="game-flow">
+                        <span class="flow-step">叫牌</span> > 
+                        <span class="flow-step current">出牌結果</span> > 
+                        <span class="flow-step">當前分數</span>
+                    </div>
+                    
+                    <div class="results-instruction">
+                        <p>請調整實際贏得的墩數</p>
+                    </div>
                     <div id="results-list"></div>
                     <button id="calculate-scores" class="start-game-btn">計算分數</button>
                 </div>
@@ -370,12 +474,26 @@
             <!-- 分數顯示階段 -->
             <div id="score-display" class="game-state">
                 <div class="score-display">
-                    <h2>當前分數</h2>
+                    <!-- 標題第一行：局數、牌數、花色 -->
+                    <div class="round-info">
+                        <h2>第<span id="current-round-scores">1</span>回合 每人<span id="cards-per-player-scores">1</span>張牌 王牌花色：<span id="trump-suit-scores">♠</span></h2>
+                    </div>
+                    
+                    <!-- 標題第二行：遊戲流程 -->
+                    <div class="game-flow">
+                        <span class="flow-step">叫牌</span> > 
+                        <span class="flow-step">出牌結果</span> > 
+                        <span class="flow-step current">當前分數</span>
+                    </div>
+                    
+                    <!-- 玩家分數顯示 -->
                     <div id="players-score" class="score-grid"></div>
+                    
+                    <!-- 底部按鈕 -->
                     <div class="action-buttons">
+                        <button id="clear-game-from-scores" class="action-btn clear-game-btn">清除遊戲</button>
                         <button id="show-history" class="action-btn history-btn">歷史記錄</button>
                         <button id="next-round" class="action-btn next-round-btn">開始下一局</button>
-                        <button id="clear-game-from-scores" class="action-btn clear-game-btn">清除遊戲</button>
                     </div>
                 </div>
             </div>
