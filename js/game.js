@@ -252,10 +252,8 @@ class Game {
         document.getElementById('bidding-summary').style.display = 'block';
         document.getElementById('start-playing').style.display = 'block';
         
-        const bidsList = document.getElementById('bids-list');
-        bidsList.innerHTML = this.players.map((player, index) => 
-            `<div>${player}: ${this.bids[index]} 墩</div>`
-        ).join('');
+        // 更新玩家狀態顯示，顯示所有玩家的叫牌結果
+        this.updatePlayersBiddingStatus();
         
         this.hideKeypad();
     }
@@ -264,7 +262,11 @@ class Game {
     clearBiddingSummary() {
         document.getElementById('bidding-summary').style.display = 'none';
         document.getElementById('start-playing').style.display = 'none';
-        document.getElementById('bids-list').innerHTML = '';
+        // 清除玩家狀態顯示
+        const playersStatus = document.getElementById('players-bidding-status');
+        if (playersStatus) {
+            playersStatus.innerHTML = '';
+        }
     }
 
     // 顯示數字鍵盤
