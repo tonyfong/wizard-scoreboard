@@ -36,6 +36,56 @@
             background: white;
         }
         
+        /* 統一行動按鈕樣式 */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .primary-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background-color: #229954;
+        }
+        
+        .danger-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .danger-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .secondary-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        /* 向後兼容的按鈕類別 */
         .start-game-btn {
             background-color: #27ae60;
             color: white;
@@ -45,6 +95,8 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
+            width: 100%;
+            max-width: 200px;
         }
         
         .start-game-btn:hover {
@@ -68,15 +120,150 @@
         
         /* 叫牌階段樣式 */
         .bidding-phase {
+            padding: 10px 20px 20px 20px;
+        }
+        
+        /* 主標題框樣式 */
+        .main-title-box {
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .main-title-box h1 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .rules-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            border: none;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .rules-btn:hover {
+            background: #2980b9;
+        }
+        
+        /* 次標題框樣式 */
+        .round-info {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .round-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .round-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .cards-info {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .trump-info {
+            flex: 1;
+            text-align: right;
+        }
+        
+        /* 模態框樣式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .close {
+            font-size: 24px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .modal-body {
             padding: 20px;
         }
         
-        .round-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
+        .modal-body h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .modal-body p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .modal-body ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .modal-body li {
+            margin: 5px 0;
+            line-height: 1.5;
         }
         
         .current-player {
@@ -89,22 +276,33 @@
         }
         
         .bidding-summary {
-            background: #fff3e0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #eee;
             padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
+            text-align: center; /* 讓開始出牌按鈕置中 */
+            z-index: 1000;
         }
         
-        .bidding-complete-info h3 {
-            margin: 0 0 10px 0;
-            color: #2c3e50;
+        .results-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #eee;
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
         }
         
         /* 遊戲流程樣式 */
         .game-flow {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             font-size: 1.1em;
         }
         
@@ -130,12 +328,19 @@
             margin-bottom: 20px;
         }
         
-        .player-bidding-card {
+        /* 統一玩家卡片樣式 */
+        .player-bidding-card,
+        .player-result,
+        .player-score {
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            padding: 15px;
+            padding: 16px;
+            margin: 10px 0;
             transition: all 0.3s;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
         }
         
         .player-bidding-card.current {
@@ -144,19 +349,129 @@
             box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
         }
         
-        .player-bidding-card h3 {
+        .player-bidding-card h3,
+        .player-result h3,
+        .player-score h3 {
             margin: 0 0 5px 0;
             color: #2c3e50;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* 統一所有流程卡片的兩行文字皆靠左 */
+        .player-bidding-card,
+        .player-bidding-card .status,
+        .player-result .player-info,
+        .player-result .player-info .bid-info,
+        .player-score .player-info,
+        .player-score .player-info .score-formula {
+            text-align: left;
         }
         
         .player-bidding-card .status {
-            font-size: 0.9em;
+            font-size: 14px;
             color: #666;
         }
         
         .player-bidding-card.current .status {
             color: #3498db;
             font-weight: bold;
+        }
+        
+        /* 出牌結果卡片特殊佈局 */
+        .player-result {
+            justify-content: space-between;
+        }
+        
+        .player-result .player-info {
+            flex: 1;
+        }
+        
+        .player-result .player-info .bid-info {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        .player-result .trick-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 92px;
+            justify-content: flex-end;
+        }
+        
+        .player-result .trick-number {
+            font-size: 26px;
+            font-weight: bold;
+            color: #333;
+            min-width: 24px;
+            text-align: right;
+        }
+        .player-result .trick-number.mismatch {
+            color: #e74c3c; /* 不一致時用紅色 */
+        }
+        
+        /* 垂直的上下三角按鈕，佔用更少高度 */
+        .player-result .triangle-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .player-result .triangle-btn {
+            width: 28px;
+            height: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f8f9fa;
+            color: #333;
+            font-size: 12px;
+            line-height: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .player-result .triangle-btn:hover:not(:disabled) {
+            background: #e9ecef;
+        }
+        .player-result .triangle-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        
+        /* 分數卡片特殊佈局 */
+        .player-score {
+            justify-content: space-between;
+            text-align: left;
+        }
+        
+        .player-score .player-info {
+            flex: 1;
+        }
+        
+        .player-score .player-info .score-formula {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        .player-score .score-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        /* 當前分數頁：保留玩家卡片的灰白底與邊框 */
+        #score-display .player-score {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding-left: 16px;
+            padding-right: 16px;
         }
         
         /* 分數計算樣式 */
@@ -180,11 +495,11 @@
         
         /* 分數顯示容器樣式 */
         .scores-container {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
+            background: transparent; /* 去掉大面積白底 */
+            border-radius: 0;
+            padding: 0; /* 內距歸零，讓卡片靠近外框 */
             margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: none;
         }
         
         /* 按鈕佈局樣式 */
@@ -234,21 +549,34 @@
             background-color: #229954;
         }
         
-        /* 數字鍵盤樣式 */
-        .number-keypad {
+        /* 數字鍵盤總容器（固定在底部，分兩行：提示 + 鍵盤） */
+        .number-keypad-wrapper {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: white;
             border-top: 1px solid #ddd;
-            padding: 15px;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        /* 當底部固定區域顯示時，為頁面內容預留空間避免被遮擋 */
+        body.with-bottom-gap {
+            padding-bottom: 140px; /* 兩行提示+按鈕的高度預留 */
+        }
+
+        /* 第二行：數字鍵盤橫向排列 */
+        .number-keypad {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            z-index: 1000;
             justify-content: flex-start;
             flex-wrap: nowrap;
+            align-items: center;
         }
         
         .keypad-btn {
@@ -263,6 +591,29 @@
             cursor: pointer;
             transition: all 0.3s;
             flex-shrink: 0;
+        }
+
+        /* 叫牌總數提示（固定在數字鍵盤最左側） */
+        .total-bids-indicator {
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 14px;
+            color: #2c3e50;
+            white-space: nowrap;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: #f8f9fa;
+            height: 34px;
+            flex: 0 0 auto;
+        }
+
+        /* 確認鍵顯示總叫牌提示 */
+        #confirm-bid.total-shown::after {
+            content: attr(data-total-text);
+            margin-left: 6px;
+            font-size: 12px;
+            color: #ffffffcc;
         }
         
         .keypad-btn:hover:not(:disabled) {
@@ -339,10 +690,11 @@
         }
         
         .score-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             margin: 20px 0;
+            padding-bottom: 80px; /* 為固定按鈕留出空間 */
         }
         
         .player-score {
@@ -364,19 +716,32 @@
         }
         
         .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #eee;
+            padding: 15px;
             display: flex;
-            gap: 15px;
+            flex-direction: row;
+            flex-wrap: nowrap; /* 手機也保持單行顯示 */
+            gap: 10px;
             justify-content: center;
-            margin-top: 20px;
+            z-index: 1000;
         }
         
         .action-btn {
-            padding: 12px 24px;
+            flex: 1;
+            max-width: 150px;
+            padding: 12px 16px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s;
+            text-align: center;
         }
         
         .history-btn {
@@ -414,7 +779,18 @@
             }
             
             .action-buttons {
-                flex-direction: column;
+                flex-direction: row;   /* 手機也維持一行三鍵 */
+                flex-wrap: nowrap;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .action-buttons .action-btn {
+                flex: 1 1 0;   /* 三鍵平均分配，允許收縮 */
+                min-width: 0;  /* 允許在窄螢幕收縮 */
+                max-width: none;
+                padding: 10px 8px;
+                font-size: 14px; /* 縮小字體以適配單行 */
             }
         }
         
@@ -445,10 +821,9 @@
 </head>
 <body>
     <div class="container">
-        <button id="show-rules" onclick="window.open('rules.html', '_blank')" class="rules-button">?</button>
-        
         <header>
             <h1>德國橋牌記分</h1>
+            <button id="show-rules" onclick="window.open('rules.html', '_blank')" class="rules-button">?</button>
         </header>
 
         <main>
@@ -476,9 +851,13 @@
             <!-- 叫牌階段 -->
             <div id="bidding-phase" class="game-state">
                 <div class="bidding-phase">
-                    <!-- 標題第一行：局數、牌數、花色 -->
+                    <!-- 次標題框 -->
                     <div class="round-info">
-                        <h2>第<span id="current-round">1</span>回合 每人<span id="cards-per-player">1</span>張牌 王牌花色：<span id="trump-suit">♠</span></h2>
+                        <div class="round-number">第<span id="current-round">1</span>回合</div>
+                        <div class="round-details">
+                            <span class="cards-info">每人<span id="cards-per-player">1</span>張牌</span>
+                            <span class="trump-info">花色: <span id="trump-suit">♠</span></span>
+                        </div>
                     </div>
                     
                     <!-- 標題第二行：遊戲流程 -->
@@ -493,12 +872,8 @@
                         <!-- 動態生成玩家狀態 -->
                     </div>
                     
-                    <!-- 叫牌完成後的摘要 -->
+                    <!-- 叫牌完成後的按鈕 -->
                     <div class="bidding-summary" id="bidding-summary" style="display: none;">
-                        <div class="bidding-complete-info">
-                            <h3>叫牌完成</h3>
-                            <p>所有玩家已完成叫牌，準備開始出牌</p>
-                        </div>
                         <button id="start-playing" class="start-game-btn">開始出牌</button>
                     </div>
                 </div>
@@ -507,9 +882,13 @@
             <!-- 出牌結果階段 -->
             <div id="trick-results" class="game-state">
                 <div class="trick-results">
-                    <!-- 標題第一行：局數、牌數、花色 -->
+                    <!-- 次標題框 -->
                     <div class="round-info">
-                        <h2>第<span id="current-round-results">1</span>回合 每人<span id="cards-per-player-results">1</span>張牌 王牌花色：<span id="trump-suit-results">♠</span></h2>
+                        <div class="round-number">第<span id="current-round-results">1</span>回合</div>
+                        <div class="round-details">
+                            <span class="cards-info">每人<span id="cards-per-player-results">1</span>張牌</span>
+                            <span class="trump-info">花色: <span id="trump-suit-results">♠</span></span>
+                        </div>
                     </div>
                     
                     <!-- 標題第二行：遊戲流程 -->
@@ -523,16 +902,24 @@
                         <p>請調整實際贏得的墩數</p>
                     </div>
                     <div id="results-list"></div>
-                    <button id="calculate-scores" class="start-game-btn">計算分數</button>
+                    
+                    <!-- 計算分數按鈕 - 固定在底部 -->
+                    <div class="results-action-bar">
+                        <button id="calculate-scores" class="start-game-btn">計算分數</button>
+                    </div>
                 </div>
             </div>
 
             <!-- 分數顯示階段 -->
             <div id="score-display" class="game-state">
                 <div class="score-display">
-                    <!-- 標題第一行：局數、牌數、花色 -->
+                    <!-- 次標題框 -->
                     <div class="round-info">
-                        <h2>第<span id="current-round-scores">1</span>回合 每人<span id="cards-per-player-scores">1</span>張牌 王牌花色：<span id="trump-suit-scores">♠</span></h2>
+                        <div class="round-number">第<span id="current-round-scores">1</span>回合</div>
+                        <div class="round-details">
+                            <span class="cards-info">每人<span id="cards-per-player-scores">1</span>張牌</span>
+                            <span class="trump-info">花色: <span id="trump-suit-scores">♠</span></span>
+                        </div>
                     </div>
                     
                     <!-- 標題第二行：遊戲流程 -->
@@ -549,9 +936,9 @@
                     
                     <!-- 底部按鈕 -->
                     <div class="action-buttons">
-                        <button id="clear-game-from-scores" class="action-btn clear-game-btn">清除遊戲</button>
-                        <button id="show-history" class="action-btn history-btn">歷史記錄</button>
-                        <button id="next-round" class="action-btn next-round-btn">開始下一局</button>
+                        <button id="clear-game-from-scores" class="action-btn danger-btn">清除遊戲</button>
+                        <button id="show-history" class="action-btn secondary-btn">歷史記錄</button>
+                        <button id="next-round" class="action-btn primary-btn">開始下一局</button>
                     </div>
                 </div>
             </div>
@@ -568,7 +955,9 @@
     </div>
 
     <!-- 數字鍵盤 -->
-    <div id="number-keypad" class="number-keypad" style="display: none;">
+    <div id="number-keypad" class="number-keypad-wrapper" style="display: none;">
+        <div id="total-bids-indicator" class="total-bids-indicator">已共叫0墩</div>
+        <div class="number-keypad">
         <button class="keypad-btn" data-value="0">0</button>
         <button class="keypad-btn" data-value="1">1</button>
         <button class="keypad-btn" data-value="2">2</button>
@@ -580,11 +969,51 @@
         <button class="keypad-btn" data-value="8">8</button>
         <button class="keypad-btn" data-value="9">9</button>
         <button class="keypad-btn" data-value="10">10</button>
-        <button id="confirm-bid" class="keypad-btn confirm-btn">確定</button>
+        <button id="confirm-bid" class="keypad-btn confirm-btn">開始叫牌</button>
+        </div>
+    </div>
+
+    <!-- 規則模態框 -->
+    <div id="rules-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>遊戲規則</h2>
+                <span class="close" onclick="closeRules()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>德國橋牌記分規則</h3>
+                <p>1. 每位玩家輪流叫牌，預測自己能贏得的墩數</p>
+                <p>2. 叫牌總數不能等於發牌數量</p>
+                <p>3. 出牌後，根據實際贏得的墩數計算分數</p>
+                <p>4. 分數計算：</p>
+                <ul>
+                    <li>叫牌準確：10 + (墩數 × 墩數) 分</li>
+                    <li>叫牌不準：-(差異 × 差異) 分</li>
+                </ul>
+                <p>5. 遊戲進行多回合，牌數先遞增後遞減</p>
+            </div>
+        </div>
     </div>
 
     <script src="js/storage.js"></script>
     <script src="js/game.js"></script>
     <script src="test/inline-test.js"></script>
+    <script>
+        function showRules() {
+            document.getElementById('rules-modal').style.display = 'block';
+        }
+        
+        function closeRules() {
+            document.getElementById('rules-modal').style.display = 'none';
+        }
+        
+        // 點擊模態框外部關閉
+        window.onclick = function(event) {
+            const modal = document.getElementById('rules-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html> 
