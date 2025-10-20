@@ -20,14 +20,45 @@ body {
 
 /* 头部样式 */
 header {
-    text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 h1 {
     color: #2c3e50;
-    font-size: 2.5em;
-    margin-bottom: 20px;
+    font-size: 24px;
+    margin: 0;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 規則按鈕樣式 */
+.rules-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3498db;
+    color: white;
+    border: none;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rules-button:hover {
+    background: #2980b9;
 }
 
 /* 区块样式 */
