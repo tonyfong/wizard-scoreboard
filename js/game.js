@@ -186,6 +186,14 @@ class Game {
         if (resultsActionBar) resultsActionBar.style.display = 'none';
         if (scoreActionButtons) scoreActionButtons.style.display = 'none';
         
+        // 設置body類以處理底部間距
+        document.body.classList.remove('with-bottom-gap', 'results-phase');
+        if (this.gamePhase === 'bidding') {
+            document.body.classList.add('with-bottom-gap');
+        } else if (this.gamePhase === 'results') {
+            document.body.classList.add('results-phase');
+        }
+        
         // 顯示當前階段
         const currentPhase = document.getElementById(this.gamePhase === 'setup' ? 'game-setup' : 
                                                    this.gamePhase === 'bidding' ? 'bidding-phase' :
