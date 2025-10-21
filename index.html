@@ -44,6 +44,8 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .player-name-input {
@@ -51,6 +53,8 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         /* 計分方法選擇樣式 */
@@ -875,6 +879,17 @@
                 flex-wrap: nowrap;
                 gap: 8px;
                 padding: 10px;
+            }
+            
+            /* 移動設備玩家名稱輸入框調整 */
+            #player-names-container {
+                gap: 8px;
+                padding: 0 5px;
+            }
+            
+            .player-name-input {
+                font-size: 16px; /* 防止iOS縮放 */
+                padding: 10px 8px;
             }
 
             .action-buttons .action-btn {
