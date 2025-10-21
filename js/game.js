@@ -249,6 +249,16 @@ class Game {
             document.body.classList.add('results-phase');
         }
         
+        // 控制數字鍵盤的顯示
+        const keypad = document.getElementById('number-keypad');
+        if (keypad) {
+            if (this.gamePhase === 'bidding') {
+                keypad.style.display = 'flex';
+            } else {
+                keypad.style.display = 'none';
+            }
+        }
+        
         // 顯示當前階段
         const currentPhase = document.getElementById(this.gamePhase === 'setup' ? 'game-setup' : 
                                                    this.gamePhase === 'bidding' ? 'bidding-phase' :
