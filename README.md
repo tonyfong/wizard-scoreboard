@@ -55,6 +55,14 @@ git clone https://github.com/tonyfong/wizard-scoreboard.git
 
 2. 使用瀏覽器打開`index.html`即可開始使用
 
+### 本地測試服務器（可選）
+
+如果需要使用本地服務器進行測試：
+
+1. 雙擊運行 `start-server.bat`
+2. 在瀏覽器中訪問 `http://localhost:8000`
+3. 按 Ctrl+C 停止服務器
+
 ## 開發者
 
 - 作者：Tony Fong
