@@ -13,6 +13,11 @@ class Game {
         this.maxCardsTotal = 52; // 一副牌共52張
         this.isIncreasing = true; // 是否在增加牌數
         
+        // 新增功能
+        this.playerOrder = []; // 玩家出牌順序
+        this.currentDealer = 0; // 當前發牌者索引
+        this.scoringMethod = 'squared'; // 計分方法：squared 或 cubed
+        
         // 遊戲階段管理
         this.gamePhase = 'setup'; // setup, bidding, playing, results, scores
         this.currentBiddingPlayer = 0; // 當前叫牌的玩家索引
@@ -26,6 +31,9 @@ class Game {
             console.log('成功載入保存的遊戲狀態');
             this.updateDisplay();
         }
+        
+        // 初始化玩家名稱輸入框
+        this.updatePlayerNames();
         
         console.log('遊戲初始化完成');
     }
@@ -62,6 +70,24 @@ class Game {
         // 確定叫牌按鈕
         document.getElementById('confirm-bid').addEventListener('click', () => this.confirmBid());
         
+        // 玩家數量變化時更新玩家名稱輸入框
+        document.getElementById('player-count').addEventListener('change', () => this.updatePlayerNames());
+        
+        // 計分方法選擇
+        document.querySelectorAll('input[name="scoring-method"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                this.scoringMethod = e.target.value;
+                this.saveGameData();
+            });
+        });
+        
+        // 快速清除遊戲按鈕
+        document.getElementById('clear-game-quick').addEventListener('click', () => {
+            if (confirm('確定要清除當前遊戲嗎？')) {
+                this.clearGame();
+            }
+        });
+        
         // 開始出牌按鈕
         document.getElementById('start-playing').addEventListener('click', () => this.startPlaying());
         
@@ -84,13 +110,42 @@ class Game {
         console.log('事件監聽器設置完成');
     }
 
+    // 更新玩家名稱輸入框
+    updatePlayerNames() {
+        const playerCount = parseInt(document.getElementById('player-count').value);
+        const container = document.getElementById('player-names-container');
+        
+        container.innerHTML = '';
+        
+        for (let i = 0; i < playerCount; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'player-name-input';
+            input.placeholder = `玩家${i + 1}`;
+            input.value = `玩家${i + 1}`;
+            input.id = `player-name-${i}`;
+            container.appendChild(input);
+        }
+    }
+    
     // 開始新遊戲
     startGame() {
         console.log('開始新遊戲...');
         const playerCount = parseInt(document.getElementById('player-count').value);
         console.log(`選擇的玩家數量: ${playerCount}`);
         
-        this.players = Array.from({length: playerCount}, (_, i) => `玩家${i + 1}`);
+        // 獲取自定義玩家名稱
+        this.players = [];
+        for (let i = 0; i < playerCount; i++) {
+            const nameInput = document.getElementById(`player-name-${i}`);
+            const playerName = nameInput ? nameInput.value.trim() || `玩家${i + 1}` : `玩家${i + 1}`;
+            this.players.push(playerName);
+        }
+        
+        // 隨機生成玩家出牌順序
+        this.playerOrder = [...Array(playerCount).keys()].sort(() => Math.random() - 0.5);
+        this.currentDealer = 0;
+        
         this.scores = new Array(playerCount).fill(0);
         this.history = [];
         this.currentRound = 0;
@@ -264,11 +319,16 @@ class Game {
         const container = document.getElementById('players-bidding-status');
         const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
         
-        container.innerHTML = this.players.map((player, index) => {
-            const isCurrentPlayer = index === this.currentBiddingPlayer;
-            const hasBid = this.bids[index] !== null && this.bids[index] !== undefined;
-            const bidValue = this.bids[index] || 0;
-            
+        // 按照出牌順序顯示玩家
+        const orderedPlayers = this.playerOrder.map(orderIndex => ({
+            index: orderIndex,
+            player: this.players[orderIndex],
+            isCurrentPlayer: orderIndex === this.currentBiddingPlayer,
+            hasBid: this.bids[orderIndex] !== null && this.bids[orderIndex] !== undefined,
+            bidValue: this.bids[orderIndex] || 0
+        }));
+        
+        container.innerHTML = orderedPlayers.map(({index, player, isCurrentPlayer, hasBid, bidValue}) => {
             let statusText = '';
             if (isCurrentPlayer) {
                 statusText = `請叫牌`;
@@ -444,7 +504,13 @@ class Game {
         if (trumpSuitEl) trumpSuitEl.textContent = this.trumpSuit;
         
         const resultsList = document.getElementById('results-list');
-        resultsList.innerHTML = this.players.map((player, index) => {
+        // 按照出牌順序顯示玩家
+        const orderedPlayers = this.playerOrder.map(orderIndex => ({
+            index: orderIndex,
+            player: this.players[orderIndex]
+        }));
+        
+        resultsList.innerHTML = orderedPlayers.map(({index, player}) => {
             // 將預設墩數設為該玩家叫牌數（僅在尚未初始化時）
             if (this.actualTricks[index] === null || this.actualTricks[index] === undefined) {
                 this.actualTricks[index] = this.bids[index];
@@ -530,7 +596,12 @@ class Game {
             if (difference === 0) {
                 this.scores[index] += 10 + (tricks * tricks);
             } else {
-                this.scores[index] -= (difference * difference);
+                // 根據選擇的計分方法計算扣分
+                if (this.scoringMethod === 'cubed') {
+                    this.scores[index] -= (difference * difference * difference);
+                } else {
+                    this.scores[index] -= (difference * difference);
+                }
             }
         });
     }
@@ -543,7 +614,14 @@ class Game {
         document.getElementById('trump-suit-scores').textContent = this.trumpSuit;
         
         const scoreDisplay = document.getElementById('players-score');
-        scoreDisplay.innerHTML = this.players.map((player, index) => {
+        
+        // 按照出牌順序顯示玩家
+        const orderedPlayers = this.playerOrder.map(orderIndex => ({
+            index: orderIndex,
+            player: this.players[orderIndex]
+        }));
+        
+        scoreDisplay.innerHTML = orderedPlayers.map(({index, player}) => {
             const currentScore = this.scores[index];
             const previousScore = this.currentRound > 1 ? this.scores[index] - this.getCurrentRoundScore(index) : 0;
             const currentRoundScore = this.getCurrentRoundScore(index);
@@ -603,6 +681,16 @@ class Game {
 
     // 下一局
     nextRound() {
+        // 輪轉發牌者
+        this.currentDealer = (this.currentDealer + 1) % this.players.length;
+        
+        // 重新排列玩家順序，讓新的發牌者排在最前面
+        const newOrder = [];
+        for (let i = 0; i < this.players.length; i++) {
+            newOrder.push((this.currentDealer + i) % this.players.length);
+        }
+        this.playerOrder = newOrder;
+        
         this.startNewRound();
     }
 

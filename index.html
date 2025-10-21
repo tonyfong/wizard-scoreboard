@@ -28,6 +28,72 @@
             align-items: center;
         }
         
+        /* 玩家名稱設置樣式 */
+        .player-names-section {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .player-names-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        #player-names-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .player-name-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        /* 計分方法選擇樣式 */
+        .scoring-method-section {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .scoring-method-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .scoring-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .radio-option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+        
+        .radio-option span {
+            font-size: 14px;
+        }
+        
         .player-count-select {
             padding: 10px 15px;
             font-size: 18px;
@@ -304,6 +370,26 @@
             text-align: center;
             margin-bottom: 12px;
             font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .clear-game-quick-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        
+        .clear-game-quick-btn:hover {
+            opacity: 1;
+            background-color: rgba(255, 0, 0, 0.1);
         }
         
         .flow-step {
@@ -847,8 +933,31 @@
                             <option value="7">7人</option>
                             <option value="8">8人</option>
                         </select>
+                        
+                        <!-- 玩家名稱設置 -->
+                        <div id="player-names-section" class="player-names-section">
+                            <label>玩家名稱設置：</label>
+                            <div id="player-names-container">
+                                <!-- 動態生成玩家名稱輸入框 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 計分方法選擇 -->
+                        <div class="scoring-method-section">
+                            <label>計分方法：</label>
+                            <div class="scoring-options">
+                                <label class="radio-option">
+                                    <input type="radio" name="scoring-method" value="squared" checked>
+                                    <span>標準計分：扣分 = -(贏墩數 - 叫墩數)²</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="scoring-method" value="cubed">
+                                    <span>新計分：扣分 = -(贏墩數 - 叫墩數)³</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <button id="start-game" class="start-game-btn">開始遊戲</button>
-                        <button id="clear-game" class="clear-game-btn">清除遊戲</button>
                     </div>
                 </div>
             </div>
@@ -870,6 +979,7 @@
                         <span class="flow-step current">叫牌</span> > 
                         <span class="flow-step">出牌結果</span> > 
                         <span class="flow-step">當前分數</span>
+                        <button id="clear-game-quick" class="clear-game-quick-btn" title="清除遊戲">🗑️</button>
                     </div>
                     
                     <!-- 玩家叫牌狀態 -->
