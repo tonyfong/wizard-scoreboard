@@ -142,9 +142,14 @@ class Game {
             this.players.push(playerName);
         }
         
-        // 隨機生成玩家出牌順序
-        this.playerOrder = [...Array(playerCount).keys()].sort(() => Math.random() - 0.5);
-        this.currentDealer = 0;
+        // 隨機選擇第一個發牌者
+        this.currentDealer = Math.floor(Math.random() * playerCount);
+        
+        // 重新排列玩家順序，讓發牌者排在最前面
+        this.playerOrder = [];
+        for (let i = 0; i < playerCount; i++) {
+            this.playerOrder.push((this.currentDealer + i) % playerCount);
+        }
         
         this.scores = new Array(playerCount).fill(0);
         this.history = [];
@@ -693,8 +698,10 @@ class Game {
 
     // 下一局
     nextRound() {
-        // 輪轉發牌者
-        this.currentDealer = (this.currentDealer + 1) % this.players.length;
+        // 輪轉發牌者：找到當前發牌者在playerOrder中的位置，然後輪轉到下一個
+        const currentDealerIndex = this.playerOrder.indexOf(this.currentDealer);
+        const nextDealerIndex = (currentDealerIndex + 1) % this.players.length;
+        this.currentDealer = this.playerOrder[nextDealerIndex];
         
         // 重新排列玩家順序，讓新的發牌者排在最前面
         const newOrder = [];
