@@ -63,6 +63,16 @@ git clone https://github.com/tonyfong/wizard-scoreboard.git
 2. 在瀏覽器中訪問 `http://localhost:8000`
 3. 按 Ctrl+C 停止服務器
 
+### 智能測試機制
+
+AI助手會在進行可能影響功能的改動時，自動詢問是否需要運行完整測試：
+
+- **必須測試**：JavaScript邏輯、HTML結構、遊戲規則修改
+- **建議測試**：CSS重大調整、新增功能、性能優化
+- **不需要測試**：純CSS美化、文檔更新、代碼重構
+
+詳細說明請參考 `test/TEST_TRIGGER.md`
+
 ## 開發者
 
 - 作者：Tony Fong
