@@ -568,6 +568,11 @@
         body.with-bottom-gap {
             padding-bottom: 140px; /* 兩行提示+按鈕的高度預留 */
         }
+        
+        /* 出牌結果頁面的底部間距 */
+        body.results-phase {
+            padding-bottom: 80px; /* 為底部計算分數按鈕預留空間 */
+        }
 
         /* 第二行：數字鍵盤橫向排列 */
         .number-keypad {
@@ -997,7 +1002,6 @@
 
     <script src="js/storage.js"></script>
     <script src="js/game.js"></script>
-    <script src="test/inline-test.js"></script>
     <script>
         function showRules() {
             document.getElementById('rules-modal').style.display = 'block';
