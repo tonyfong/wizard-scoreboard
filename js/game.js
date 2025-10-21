@@ -81,12 +81,6 @@ class Game {
             });
         });
         
-        // 快速清除遊戲按鈕
-        document.getElementById('clear-game-quick').addEventListener('click', () => {
-            if (confirm('確定要清除當前遊戲嗎？')) {
-                this.clearGame();
-            }
-        });
         
         // 開始出牌按鈕
         document.getElementById('start-playing').addEventListener('click', () => this.startPlaying());
