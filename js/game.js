@@ -20,7 +20,7 @@ class Game {
         
         // 遊戲階段管理
         this.gamePhase = 'setup'; // setup, bidding, playing, results, scores
-        this.currentBiddingPlayer = 0; // 當前叫牌的玩家索引
+        this.currentBiddingPlayerIndexIndex = 0; // 當前叫牌玩家在playerOrder中的索引
         this.selectedBid = null; // 當前選擇的叫牌數
         
         // 先初始化事件監聽器
@@ -152,7 +152,7 @@ class Game {
         this.currentTricks = 0;
         this.isIncreasing = true;
         this.gamePhase = 'bidding';
-        this.currentBiddingPlayer = 0;
+        this.currentBiddingPlayerIndex = 0;
         this.selectedBid = null;
         
         // 清除叫牌摘要顯示
@@ -189,7 +189,7 @@ class Game {
         this.actualTricks = new Array(this.players.length).fill(null);
         this.trumpSuit = this.getRandomSuit();
         this.gamePhase = 'bidding';
-        this.currentBiddingPlayer = 0;
+        this.currentBiddingPlayerIndex = 0;
         this.selectedBid = null;
         
         // 清除上一回合的叫牌摘要顯示
@@ -272,7 +272,7 @@ class Game {
         if (this.gamePhase === 'bidding') {
             this.updateBiddingDisplay();
             // 檢查是否需要顯示叫牌摘要（所有玩家都叫完牌時）
-            if (this.currentBiddingPlayer >= this.players.length) {
+            if (this.currentBiddingPlayerIndex >= this.players.length) {
                 if (biddingSummary) biddingSummary.style.display = 'block';
             }
         } else if (this.gamePhase === 'results') {
@@ -312,7 +312,7 @@ class Game {
         }
         
         // 更新當前叫牌玩家
-        if (this.currentBiddingPlayer < this.players.length) {
+        if (this.currentBiddingPlayerIndex < this.players.length) {
             // 計算已叫總數
             const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
             
@@ -333,7 +333,7 @@ class Game {
         const orderedPlayers = this.playerOrder.map(orderIndex => ({
             index: orderIndex,
             player: this.players[orderIndex],
-            isCurrentPlayer: orderIndex === this.currentBiddingPlayer,
+            isCurrentPlayer: this.playerOrder[this.currentBiddingPlayerIndex] === orderIndex,
             hasBid: this.bids[orderIndex] !== null && this.bids[orderIndex] !== undefined,
             bidValue: this.bids[orderIndex] || 0
         }));
@@ -400,7 +400,7 @@ class Game {
         document.querySelectorAll('.keypad-btn[data-value]').forEach(btn => {
             const value = parseInt(btn.dataset.value);
             const totalBids = this.bids.reduce((sum, bid) => sum + (bid || 0), 0);
-            const isLastPlayer = this.currentBiddingPlayer === this.players.length - 1;
+            const isLastPlayer = this.currentBiddingPlayerIndex === this.players.length - 1;
             
             // 顯示所有從 0 到最大牌數的按鈕
             if (value <= this.currentTricks) {
@@ -468,13 +468,15 @@ class Game {
             return;
         }
         
-        console.log(`玩家${this.currentBiddingPlayer + 1}叫牌: ${this.selectedBid}`);
-        this.bids[this.currentBiddingPlayer] = this.selectedBid;
-        this.currentBiddingPlayer++;
+        const currentPlayerIndex = this.playerOrder[this.currentBiddingPlayerIndex];
+        console.log(`玩家${currentPlayerIndex + 1}叫牌: ${this.selectedBid}`);
+        this.bids[currentPlayerIndex] = this.selectedBid;
+        this.currentBiddingPlayerIndex++;
         this.selectedBid = null; // 重置為null而不是0
         
-        if (this.currentBiddingPlayer < this.players.length) {
-            console.log(`輪到玩家${this.currentBiddingPlayer + 1}叫牌`);
+        if (this.currentBiddingPlayerIndex < this.players.length) {
+            const nextPlayerIndex = this.playerOrder[this.currentBiddingPlayerIndex];
+            console.log(`輪到玩家${nextPlayerIndex + 1}叫牌`);
             this.updateBiddingDisplay();
         } else {
             console.log('所有玩家都叫完牌了');
@@ -701,6 +703,9 @@ class Game {
         }
         this.playerOrder = newOrder;
         
+        // 重置叫牌順序，從新的發牌者開始
+        this.currentBiddingPlayerIndex = 0;
+        
         this.startNewRound();
     }
 
@@ -720,7 +725,7 @@ class Game {
             this.actualTricks = [];
             this.isIncreasing = true;
             this.gamePhase = 'setup';
-            this.currentBiddingPlayer = 0;
+            this.currentBiddingPlayerIndex = 0;
             this.selectedBid = null;
             
             // 清除叫牌摘要顯示
@@ -755,7 +760,7 @@ class Game {
             actualTricks: this.actualTricks,
             isIncreasing: this.isIncreasing,
             gamePhase: this.gamePhase,
-            currentBiddingPlayer: this.currentBiddingPlayer,
+            currentBiddingPlayer: this.currentBiddingPlayerIndex,
             selectedBid: this.selectedBid
         };
         storage.saveGame(gameState);
@@ -775,7 +780,7 @@ class Game {
             this.actualTricks = gameState.actualTricks || [];
             this.isIncreasing = gameState.isIncreasing ?? true;
             this.gamePhase = gameState.gamePhase || 'setup';
-            this.currentBiddingPlayer = gameState.currentBiddingPlayer || 0;
+            this.currentBiddingPlayerIndex = gameState.currentBiddingPlayer || 0;
             this.selectedBid = gameState.selectedBid || 0;
             return true;
         }
