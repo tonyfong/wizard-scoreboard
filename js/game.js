@@ -20,7 +20,7 @@ class Game {
         
         // 遊戲階段管理
         this.gamePhase = 'setup'; // setup, bidding, playing, results, scores
-        this.currentBiddingPlayerIndexIndex = 0; // 當前叫牌玩家在playerOrder中的索引
+        this.currentBiddingPlayerIndex = 0; // 當前叫牌玩家在playerOrder中的索引
         this.selectedBid = null; // 當前選擇的叫牌數
         
         // 先初始化事件監聽器
@@ -30,6 +30,8 @@ class Game {
         if (this.loadGameState()) {
             console.log('成功載入保存的遊戲狀態');
             this.updateDisplay();
+        } else {
+            console.log('沒有找到保存的遊戲狀態，使用默認設置');
         }
         
         // 初始化玩家名稱輸入框
@@ -100,6 +102,20 @@ class Game {
             clearGameFromScores.addEventListener('click', () => this.clearGame());
             console.log('找到分數頁面清除遊戲按鈕');
         }
+        
+        // 頁面可見性變化時保存狀態
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('頁面隱藏，保存遊戲狀態');
+                this.saveGameState();
+            }
+        });
+        
+        // 頁面卸載前保存狀態
+        window.addEventListener('beforeunload', () => {
+            console.log('頁面即將卸載，保存遊戲狀態');
+            this.saveGameState();
+        });
         
         console.log('事件監聽器設置完成');
     }
@@ -761,7 +777,7 @@ class Game {
             actualTricks: this.actualTricks,
             isIncreasing: this.isIncreasing,
             gamePhase: this.gamePhase,
-            currentBiddingPlayer: this.currentBiddingPlayerIndex,
+            currentBiddingPlayerIndex: this.currentBiddingPlayerIndex,
             selectedBid: this.selectedBid
         };
         storage.saveGame(gameState);
@@ -771,6 +787,7 @@ class Game {
     loadGameState() {
         const gameState = storage.loadGame();
         if (gameState) {
+            console.log('載入遊戲狀態:', gameState);
             this.players = gameState.players || [];
             this.scores = gameState.scores || [];
             this.history = gameState.history || [];
@@ -781,8 +798,20 @@ class Game {
             this.actualTricks = gameState.actualTricks || [];
             this.isIncreasing = gameState.isIncreasing ?? true;
             this.gamePhase = gameState.gamePhase || 'setup';
-            this.currentBiddingPlayerIndex = gameState.currentBiddingPlayer || 0;
-            this.selectedBid = gameState.selectedBid || 0;
+            this.currentBiddingPlayerIndex = gameState.currentBiddingPlayerIndex || gameState.currentBiddingPlayer || 0;
+            this.selectedBid = gameState.selectedBid || null;
+            
+            // 確保玩家數據完整性
+            if (this.players.length > 0 && this.scores.length !== this.players.length) {
+                this.scores = new Array(this.players.length).fill(0);
+            }
+            
+            console.log('遊戲狀態已載入:', {
+                players: this.players.length,
+                gamePhase: this.gamePhase,
+                currentRound: this.currentRound
+            });
+            
             return true;
         }
         return false;
