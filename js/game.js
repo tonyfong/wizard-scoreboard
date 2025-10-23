@@ -778,7 +778,10 @@ class Game {
             isIncreasing: this.isIncreasing,
             gamePhase: this.gamePhase,
             currentBiddingPlayerIndex: this.currentBiddingPlayerIndex,
-            selectedBid: this.selectedBid
+            selectedBid: this.selectedBid,
+            playerOrder: this.playerOrder,
+            currentDealer: this.currentDealer,
+            scoringMethod: this.scoringMethod
         };
         storage.saveGame(gameState);
     }
@@ -800,10 +803,19 @@ class Game {
             this.gamePhase = gameState.gamePhase || 'setup';
             this.currentBiddingPlayerIndex = gameState.currentBiddingPlayerIndex || gameState.currentBiddingPlayer || 0;
             this.selectedBid = gameState.selectedBid || null;
+            this.playerOrder = gameState.playerOrder || [];
+            this.currentDealer = gameState.currentDealer || 0;
+            this.scoringMethod = gameState.scoringMethod || 'squared';
             
             // 確保玩家數據完整性
             if (this.players.length > 0 && this.scores.length !== this.players.length) {
                 this.scores = new Array(this.players.length).fill(0);
+            }
+            
+            // 如果playerOrder為空，重新生成
+            if (this.players.length > 0 && this.playerOrder.length === 0) {
+                this.playerOrder = Array.from({length: this.players.length}, (_, i) => i);
+                console.log('重新生成playerOrder:', this.playerOrder);
             }
             
             console.log('遊戲狀態已載入:', {
