@@ -5,6 +5,7 @@ class Game {
         this.players = [];
         this.scores = [];
         this.history = [];
+        this.roundScores = []; // 保存每局的分數變化，用於計算上局分數
         this.currentRound = 0;
         this.currentTricks = 0; // 當前回合的牌數
         this.trumpSuit = null; // 當前回合的王牌花色
@@ -163,6 +164,7 @@ class Game {
         
         this.scores = new Array(playerCount).fill(0);
         this.history = [];
+        this.roundScores = []; // 重置每局分數記錄
         this.currentRound = 0;
         this.currentTricks = 0;
         this.isIncreasing = true;
@@ -608,6 +610,12 @@ class Game {
         ).join(' | ');
         this.history.push(record);
         
+        // 保存本局分數變化
+        const currentRoundScores = this.players.map((_, index) => {
+            return this.getCurrentRoundScore(index);
+        });
+        this.roundScores.push(currentRoundScores);
+        
         this.gamePhase = 'scores';
         this.updateDisplay();
         this.saveGameState();
@@ -650,8 +658,18 @@ class Game {
         
         scoreDisplay.innerHTML = orderedPlayers.map(({index, player}) => {
             const currentScore = this.scores[index];
-            const previousScore = this.currentRound > 1 ? this.scores[index] - this.getCurrentRoundScore(index) : 0;
             const currentRoundScore = this.getCurrentRoundScore(index);
+            
+            // 計算上局分數：從總分中減去本局分數
+            // 這樣可以確保計算準確，即使沒有歷史記錄也能正確顯示
+            let previousScore = 0;
+            if (this.currentRound === 1) {
+                // 第一局，上局分數為0
+                previousScore = 0;
+            } else {
+                // 第二局或之後：當前總分 - 本局分數 = 上局結束時的總分
+                previousScore = currentScore - currentRoundScore;
+            }
             
             return `
                 <div class="player-score">
@@ -681,7 +699,12 @@ class Game {
         if (difference === 0) {
             return 10 + (actual * actual);
         } else {
-            return -(difference * difference);
+            // 根據選擇的計分方法計算扣分，與calculateScoresInternal保持一致
+            if (this.scoringMethod === 'cubed') {
+                return -(difference * difference * difference);
+            } else {
+                return -(difference * difference);
+            }
         }
     }
 
@@ -735,6 +758,7 @@ class Game {
             this.players = [];
             this.scores = [];
             this.history = [];
+            this.roundScores = [];
             this.currentRound = 0;
             this.currentTricks = 0;
             this.trumpSuit = null;
@@ -770,6 +794,7 @@ class Game {
             players: this.players,
             scores: this.scores,
             history: this.history,
+            roundScores: this.roundScores,
             currentRound: this.currentRound,
             currentTricks: this.currentTricks,
             trumpSuit: this.trumpSuit,
@@ -794,6 +819,7 @@ class Game {
             this.players = gameState.players || [];
             this.scores = gameState.scores || [];
             this.history = gameState.history || [];
+            this.roundScores = gameState.roundScores || [];
             this.currentRound = gameState.currentRound || 0;
             this.currentTricks = gameState.currentTricks || 0;
             this.trumpSuit = gameState.trumpSuit;
