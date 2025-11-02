@@ -79,7 +79,7 @@ class Game {
         document.querySelectorAll('input[name="scoring-method"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 this.scoringMethod = e.target.value;
-                this.saveGameData();
+                this.saveGameState();
             });
         });
         
@@ -624,10 +624,12 @@ class Game {
                 this.scores[index] += 10 + (tricks * tricks);
             } else {
                 // 根據選擇的計分方法計算扣分
+                // 使用絕對值確保無論 difference 是正數還是負數，都正確扣分
+                const absDiff = Math.abs(difference);
                 if (this.scoringMethod === 'cubed') {
-                    this.scores[index] -= (difference * difference * difference);
+                    this.scores[index] -= (absDiff * absDiff * absDiff);
                 } else {
-                    this.scores[index] -= (difference * difference);
+                    this.scores[index] -= (absDiff * absDiff);
                 }
             }
         });
@@ -682,10 +684,12 @@ class Game {
             return 10 + (actual * actual);
         } else {
             // 根據選擇的計分方法計算扣分
+            // 使用絕對值確保無論 difference 是正數還是負數，都正確扣分
+            const absDiff = Math.abs(difference);
             if (this.scoringMethod === 'cubed') {
-                return -(difference * difference * difference);
+                return -(absDiff * absDiff * absDiff);
             } else {
-                return -(difference * difference);
+                return -(absDiff * absDiff);
             }
         }
     }
